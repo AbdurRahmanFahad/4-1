@@ -1,14 +1,11 @@
+import numpy as np
+
 s = "Two One Nine Two"
 key = "Thats my Kung Fu"
 arr1 = []
 
 for c in key:
     arr1.append(ord(c))
-
-#print(arr1)
-
-# for a in arr1:
-#     print(a, end=" ")
 
 Sbox = [
     [0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76],
@@ -29,7 +26,6 @@ Sbox = [
     [0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16],
 ]
 
-
 ws = []
 w0 = []
 
@@ -39,7 +35,7 @@ for i in range(4):
 
 round_constant = [0x01, 0x00, 0x00, 0x00]
 
-#loop
+#loop for ROUNDKEYS
 for round in range(10):
 
     temp1 = ws[round*4 + 3]
@@ -91,20 +87,32 @@ for round in range(10):
 
     ws.append(w7)
 
-# for j in range(10):
-#         for k in range(4):
-#             for l in range(4):
-#                 print(hex(ws[j+k][l]), end = " ")
-#         print("")
 
-count = 0
-for i in range(len(ws)):
-    for j in range(len(ws[i])):
-        count = count + 1
-        print(hex(ws[i][j]), end = " ")
-        if count%16 == 0:
-            print("-")
+# count = 0
+# for i in range(len(ws)):
+#     for j in range(len(ws[i])):
+#         count = count + 1
+#         print(hex(ws[i][j]), end = " ")
+#         if count%16 == 0:
+#             print("-")
     
+matrix1 = []
+arr2 = []
+for c in s:
+    arr2.append(ord(c))
 
+for i in range(4):
+    matrix1.append(arr2[i*4:i*4+4])
 
+matrix1 = np.transpose(matrix1)
 
+keymatrix = ws[0:4]
+keymatrix = np.transpose(keymatrix)
+for i in range(4):
+    for j in range(4):
+        matrix1[i][j] ^= keymatrix[i][j]
+
+for i in range(4):
+    for j in range(4):
+        print(hex(matrix1[i][j]), end = " ")
+    print("")
