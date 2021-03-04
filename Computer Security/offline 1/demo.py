@@ -1,8 +1,16 @@
 import numpy as np
 from BitVector import *
 
-s = "Two One Nine Two"
-key = "Thats my Kung Fu"
+
+# Preprocessing 1 -------------------------------------------------
+
+
+#s = "Two One Nine Two"
+#key = "Thats my Kung Fu"
+
+s = "WillGraduateSoon"
+key = "BUET CSE16 Batch"
+
 arr1 = []
 
 for c in key:
@@ -36,7 +44,7 @@ for i in range(4):
 
 round_constant = [0x01, 0x00, 0x00, 0x00]
 
-#loop for ROUNDKEYS
+#loop for ROUNDKEYS ------------------------------------------------
 for round in range(10):
 
     temp1 = ws[round*4 + 3]
@@ -97,7 +105,7 @@ for round in range(10):
 #         if count%16 == 0:
 #             print("-")
 
-# Preprocessing -------------------------------------------------
+# Preprocessing 2 -------------------------------------------------
 
 matrix1 = []
 arr2 = []
@@ -116,51 +124,81 @@ for i in range(4):
         matrix1[i][j] ^= keymatrix[i][j]
 
 
-# Substitution -------------------------------------------------
+for round in range(1, 11):
+
+    # Substitution -------------------------------------------------
+
+    for i in range(4):
+        for j in range(4):
+                tt = matrix1[i][j]
+                p1 = 0xF
+                p2 = 0xF0
+                y = tt & p1
+                x = (tt & p2)>>4
+                matrix1[i][j] = Sbox[x][y]
+
+
+    # Shifting row -------------------------------------------------
+
+    tmat = matrix1[0][0:4]
+    matrix1[0] = tmat
+    tmat = matrix1[1][1:4] + matrix1[1][0:1]
+    matrix1[1] = tmat
+    tmat = matrix1[2][2:4] + matrix1[2][0:2]
+    matrix1[2] = tmat
+    tmat = matrix1[3][3:4] + matrix1[3][0:3]
+    matrix1[3] = tmat
+
+    # Mixing Column -------------------------------------------------
+    if round != 10:
+        Mixer = [[2,3,1,1],[1,2,3,1],[1,1,2,3,],[3,1,1,2]]
+        result = [[0, 0, 0, 0], 
+                [0, 0, 0, 0], 
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]] 
+        AES_modulus = BitVector(bitstring='100011011')
+
+        for i in range(4): 
+            for j in range(4): 
+                for k in range(4):
+                    x = Mixer[i][k]
+                    y = matrix1[k][j]
+                    a = BitVector(intVal = x)
+                    b = BitVector(intVal = y)
+                    bv3 = a.gf_multiply_modular(b, AES_modulus, 8)   
+                    result[i][j] = result[i][j] ^ bv3.intValue() 
+
+        matrix1 = result
+
+    # New keymatrix -------------------------------------------------
+
+    #keymatrix = ws[0:4]
+    keymatrix = ws[round*4 : round*4 + 4]
+    keymatrix = np.transpose(keymatrix)
+
+    matrix1 = matrix1 ^ keymatrix
+    matrix1 = matrix1.tolist()
+
+# Printing -------------------------------------------------
+
+# for i in range(4):
+#     for j in range(4):
+#         print(hex(matrix1[i][j]), end = " ")
+#     print("")
+
+cyphertext = ""
 
 for i in range(4):
     for j in range(4):
-            tt = matrix1[i][j]
-            p1 = 0xF
-            p2 = 0xF0
-            y = tt & p1
-            x = (tt & p2)>>4
-            matrix1[i][j] = Sbox[x][y]
+        tempo = hex(matrix1[j][i]).lstrip("0x")
+        if len(tempo) == 1:
+            cyphertext += "0"
+        if len(tempo) == 0:
+            cyphertext += "00"    
+            
+        cyphertext += tempo
 
+print(cyphertext)
 
-# Shifting row -------------------------------------------------
-tmat = matrix1[0][0:4]
-matrix1[0] = tmat
-tmat = matrix1[1][1:4] + matrix1[1][0:1]
-matrix1[1] = tmat
-tmat = matrix1[2][2:4] + matrix1[2][0:2]
-matrix1[2] = tmat
-tmat = matrix1[3][3:4] + matrix1[3][0:3]
-matrix1[3] = tmat
-
-
-# Mixing Column -------------------------------------------------
-
-Mixer = [[2,3,1,1],[1,2,3,1],[1,1,2,3,],[3,1,1,2]]
-result = [[0, 0, 0, 0], 
-        [0, 0, 0, 0], 
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]] 
-AES_modulus = BitVector(bitstring='100011011')
-
-for i in range(4): 
-      for j in range(4): 
-          for k in range(4):
-            x = Mixer[i][k]
-            y = matrix1[k][j]
-            a = BitVector(intVal = x)
-            b = BitVector(intVal = y)
-            bv3 = a.gf_multiply_modular(b, AES_modulus, 8)   
-            result[i][j] = result[i][j] ^ bv3.intValue() 
-
-matrix1 = result
-
-for i in range(4):
-    for j in range(4):
-        print(hex(matrix1[i][j]), end = " ")
-    print("")
+if cyphertext == "54b0f718f62f03c0a455ed78007c6386":
+    print("yeeeeeeeeeeeeeeeeeee")
