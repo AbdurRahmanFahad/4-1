@@ -277,6 +277,16 @@ for r in range(1,11):
     tmat = matrix2[3][1:4] + matrix2[3][0:1]
     matrix2[3] = tmat
 
+    # Substitution -------------------------------------------------
+
+    for i in range(4):
+        for j in range(4):
+                tt = matrix2[i][j]
+                p1 = 0xF
+                p2 = 0xF0
+                y = tt & p1
+                x = (tt & p2)>>4
+                matrix2[i][j] = InvSbox[x][y]
 
     # New keymatrix -------------------------------------------------
 
@@ -286,13 +296,44 @@ for r in range(1,11):
     matrix2 = matrix2 ^ keymatrix
     matrix2 = matrix2.tolist()
 
+    # Inverse Mix Column -------------------------------------------
+
+    if r != 10:
+        InvMixer = [[0x0e,0x0b,0x0d,0x09],
+                [0x09,0x0e,0x0b,0x0d],
+                [0x0d,0x09,0x0e,0x0b],
+                [0x0b,0x0d,0x09,0x0e]]
+        result = [[0, 0, 0, 0], 
+                [0, 0, 0, 0], 
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]] 
+        AES_modulus = BitVector(bitstring='100011011')
+
+        for i in range(4): 
+            for j in range(4): 
+                for k in range(4):
+                    x = InvMixer[i][k]
+                    y = matrix2[k][j]
+                    a = BitVector(intVal = x)
+                    b = BitVector(intVal = y)
+                    bv3 = a.gf_multiply_modular(b, AES_modulus, 8)   
+                    result[i][j] = result[i][j] ^ bv3.intValue() 
+
+        matrix2 = result
+
 
 # end Loop ---------------------------------------------------------------------------
 
-# for i in range(4):
-#     for j in range(4):
-#         print(hex(matrix2[i][j]), end = " ")
-#     print("")
+print("Deciphered Text: ")
+Deciphered_text = ""
+
+for i in range(4):
+    for j in range(4):
+        print(hex(matrix2[j][i]).lstrip("0x"), end = " ")
+        Deciphered_text += hex(matrix2[j][i]).lstrip("0x")
+    
+print(" [In HEX]")
+print(bytearray.fromhex(Deciphered_text).decode())
 
 
 
