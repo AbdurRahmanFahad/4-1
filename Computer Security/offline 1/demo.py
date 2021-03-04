@@ -104,13 +104,40 @@ for c in s:
 for i in range(4):
     matrix1.append(arr2[i*4:i*4+4])
 
-matrix1 = np.transpose(matrix1)
+matrix1 = np.transpose(matrix1).tolist()
 
 keymatrix = ws[0:4]
 keymatrix = np.transpose(keymatrix)
 for i in range(4):
     for j in range(4):
         matrix1[i][j] ^= keymatrix[i][j]
+
+
+#Substitution hobe
+
+for i in range(4):
+    for j in range(4):
+            tt = matrix1[i][j]
+            p1 = 0xF
+            p2 = 0xF0
+            y = tt & p1
+            x = (tt & p2)>>4
+            matrix1[i][j] = Sbox[x][y]
+
+# for i in range(4):
+#     for j in range(4):
+#         print(hex(matrix1[i][j]), end = " ")
+#     print("")
+
+# Shifting row
+tmat = matrix1[0][0:4]
+matrix1[0] = tmat
+tmat = matrix1[1][1:4] + matrix1[1][0:1]
+matrix1[1] = tmat
+tmat = matrix1[2][2:4] + matrix1[2][0:2]
+matrix1[2] = tmat
+tmat = matrix1[3][3:4] + matrix1[3][0:3]
+matrix1[3] = tmat
 
 for i in range(4):
     for j in range(4):
