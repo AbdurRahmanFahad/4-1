@@ -1,4 +1,5 @@
 import numpy as np
+from BitVector import *
 
 s = "Two One Nine Two"
 key = "Thats my Kung Fu"
@@ -95,7 +96,9 @@ for round in range(10):
 #         print(hex(ws[i][j]), end = " ")
 #         if count%16 == 0:
 #             print("-")
-    
+
+# Preprocessing -------------------------------------------------
+
 matrix1 = []
 arr2 = []
 for c in s:
@@ -113,7 +116,7 @@ for i in range(4):
         matrix1[i][j] ^= keymatrix[i][j]
 
 
-#Substitution hobe
+# Substitution -------------------------------------------------
 
 for i in range(4):
     for j in range(4):
@@ -124,12 +127,8 @@ for i in range(4):
             x = (tt & p2)>>4
             matrix1[i][j] = Sbox[x][y]
 
-# for i in range(4):
-#     for j in range(4):
-#         print(hex(matrix1[i][j]), end = " ")
-#     print("")
 
-# Shifting row
+# Shifting row -------------------------------------------------
 tmat = matrix1[0][0:4]
 matrix1[0] = tmat
 tmat = matrix1[1][1:4] + matrix1[1][0:1]
@@ -138,6 +137,28 @@ tmat = matrix1[2][2:4] + matrix1[2][0:2]
 matrix1[2] = tmat
 tmat = matrix1[3][3:4] + matrix1[3][0:3]
 matrix1[3] = tmat
+
+
+# Mixing Column -------------------------------------------------
+
+Mixer = [[2,3,1,1],[1,2,3,1],[1,1,2,3,],[3,1,1,2]]
+result = [[0, 0, 0, 0], 
+        [0, 0, 0, 0], 
+        [0, 0, 0, 0],
+        [0, 0, 0, 0]] 
+AES_modulus = BitVector(bitstring='100011011')
+
+for i in range(4): 
+      for j in range(4): 
+          for k in range(4):
+            x = Mixer[i][k]
+            y = matrix1[k][j]
+            a = BitVector(intVal = x)
+            b = BitVector(intVal = y)
+            bv3 = a.gf_multiply_modular(b, AES_modulus, 8)   
+            result[i][j] = result[i][j] ^ bv3.intValue() 
+
+matrix1 = result
 
 for i in range(4):
     for j in range(4):
