@@ -11,8 +11,12 @@ from BitVector import *
 # text preprocessing ----------------------
 
 s1 = "WillGraduateSoon"
-if len(s1) <= 16:
-    s = s1.ljust(16, ' ')
+s = ""
+
+if len(s1) % 16 != 0:
+    adspace = len(s)//16
+    adspace = (adspace+1)*16
+    s = s1.ljust(adspace, ' ')
 else:
     s = s1
 
@@ -222,7 +226,7 @@ for i in range(4):
 
 # Preprocessing -------------------------------------
 
-cyphertext = "54b0f718f62f03c0a455ed78007c6386"
+#cyphertext = "54b0f718f62f03c0a455ed78007c6386"
 matrix2 = []
 cypher_array = []
 for i in range(16):
