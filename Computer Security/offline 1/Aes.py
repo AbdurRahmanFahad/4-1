@@ -213,9 +213,10 @@ def cipher_func(s):
 
 # Decipher --------------------------------------------------
 
-def decipher_func(cyphertext):
+def decipher_func(cyphertext2):
 
     #cyphertext = "54b0f718f62f03c0a455ed78007c6386"
+    cyphertext = str(cyphertext2)
     matrix2 = []
     cypher_array = []
     for i in range(16):
@@ -351,14 +352,22 @@ t1 = rr - ll
 
 print("Cipher Text: ")
 ll = time()
-ciphered = cipher_func(s)
+no_block = len(s)//16
+ciphered = ""
+for ii in range(no_block):
+    ciphered += cipher_func(s[ii*16:ii*16+16])
 rr = time()
 t2 = rr - ll
 
 print(ciphered, end = ' ')
 print(" [In HEX]")
 ll = time()
-Deciphered_text = decipher_func(ciphered)
+
+Deciphered_text = ""
+
+for ii in range(no_block):
+    Deciphered_text +=decipher_func(ciphered[ii*32:ii*32+32])
+
 rr = time()
 t3 = rr - ll
 print(bytearray.fromhex(Deciphered_text).decode(), end = ' ')
