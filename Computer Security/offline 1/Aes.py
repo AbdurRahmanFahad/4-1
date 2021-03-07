@@ -320,14 +320,11 @@ def decipher_func(cyphertext2):
 
     Deciphered_text = ""
     
-    print("Deciphered Text: ")
     for i in range(4):
         for j in range(4):
-            print(hex(matrix2[j][i]).lstrip("0x"), end = " ")
+            #print(hex(matrix2[j][i]).lstrip("0x"), end = " ")
             Deciphered_text += hex(matrix2[j][i]).lstrip("0x")
     
-    print(" [In HEX]")
-
     return Deciphered_text    
 
 #s1 = "Two One Nine Two"
@@ -335,11 +332,11 @@ def decipher_func(cyphertext2):
 
 key1 = "BUET CSE16 Batch"
 
-s1 = "WillGraduateSoon"
+s1 = "WillGraduateSoon Thats my"
 s = ""
 
 if len(s1) % 16 != 0:
-    adspace = len(s)//16
+    adspace = len(s1)//16
     adspace = (adspace+1)*16
     s = s1.ljust(adspace, ' ')
 else:
@@ -368,12 +365,16 @@ Deciphered_text = ""
 for ii in range(no_block):
     Deciphered_text +=decipher_func(ciphered[ii*32:ii*32+32])
 
+print("Deciphered Text: ")
+print(Deciphered_text, end = ' ')
+print(" [In HEX]")
+
 rr = time()
 t3 = rr - ll
 print(bytearray.fromhex(Deciphered_text).decode(), end = ' ')
 print(" [In ASCII]")
 
-print("Execution Time\nKey Scheduling:", end = ' ')
+print("Execution Time\nKey Scheduling : ", end = ' ')
 print(t1, end = ' ')
 print("seconds")
 print("Encryption Time: ", end = ' ')
