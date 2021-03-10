@@ -26,6 +26,27 @@ struct point u = {0,0,1};
 struct point r = {-1/sqrt(2),1/sqrt(2),0};
 struct point l = {-1/sqrt(2),-1/sqrt(2),0};
 
+struct point cross_product(struct point v1, struct point v2)
+{
+    struct point res = {0,0,0};
+
+    res.x = v1.y*v2.z - v1.z*v2.y;
+    res.y = v1.z*v2.x - v1.x*v2.z;
+    res.z = v1.x*v2.y - v1.y*v2.x;
+
+    return res;
+};
+
+struct point normalize(struct point v)
+{
+    struct point res = {0,0,0};
+    double modulas = sqrt(v.x*v.x+v.y*v.y+v.z*v.z);
+    res.x = v.x/modulas;
+    res.y = v.y/modulas;
+    res.z = v.z/modulas;
+
+    return res;
+};
 
 void drawAxes()
 {
@@ -227,10 +248,58 @@ void drawSS()
 void keyboardListener(unsigned char key, int x,int y){
 	switch(key){
 
-		case '1':
+		case 'g':
 			drawgrid=1-drawgrid;
 			break;
+        case '1':
+            l.x = l.x*cos(2*pi - 3*pi/180.0) + r.x*sin(2*pi - 3*pi/180.0);
+            l.y = l.y*cos(2*pi - 3*pi/180.0) + r.y*sin(2*pi - 3*pi/180.0);
+            l.z = l.z*cos(2*pi - 3*pi/180.0) + r.z*sin(2*pi - 3*pi/180.0);
+            l = normalize(l);
+            r = cross_product(l, u);
+            r = normalize(r);
+            break;
+        case '2':
+            l.x = l.x*cos(3*pi/180.0) + r.x*sin(3*pi/180.0);
+            l.y = l.y*cos(3*pi/180.0) + r.y*sin(3*pi/180.0);
+            l.z = l.z*cos(3*pi/180.0) + r.z*sin(3*pi/180.0);
+            l = normalize(l);
+            r = cross_product(l, u);
+            r = normalize(r);
+            break;
 
+        case '3':
+            l.x = l.x*cos(3*pi/180.0) + u.x*sin(3*pi/180.0);
+            l.y = l.y*cos(3*pi/180.0) + u.y*sin(3*pi/180.0);
+            l.z = l.z*cos(3*pi/180.0) + u.z*sin(3*pi/180.0);
+            l = normalize(l);
+            u = cross_product(r, l);
+            u = normalize(u);
+            break;
+        case '4':
+            l.x = l.x*cos(2*pi - 3*pi/180.0) + u.x*sin(2*pi - 3*pi/180.0);
+            l.y = l.y*cos(2*pi - 3*pi/180.0) + u.y*sin(2*pi - 3*pi/180.0);
+            l.z = l.z*cos(2*pi - 3*pi/180.0) + u.z*sin(2*pi - 3*pi/180.0);
+            l = normalize(l);
+            u = cross_product(r, l);
+            u = normalize(u);
+            break;
+        case '5':
+            u.x = u.x*cos(2*pi - 3*pi/180.0) + r.x*sin(2*pi - 3*pi/180.0);
+            u.y = u.y*cos(2*pi - 3*pi/180.0) + r.y*sin(2*pi - 3*pi/180.0);
+            u.z = u.z*cos(2*pi - 3*pi/180.0) + r.z*sin(2*pi - 3*pi/180.0);
+            u = normalize(u);
+            r = cross_product(l, u);
+            r = normalize(r);
+            break;
+        case '6':
+            u.x = u.x*cos(3*pi/180.0) + r.x*sin(3*pi/180.0);
+            u.y = u.y*cos(3*pi/180.0) + r.y*sin(3*pi/180.0);
+            u.z = u.z*cos(3*pi/180.0) + r.z*sin(3*pi/180.0);
+            u = normalize(u);
+            r = cross_product(l, u);
+            r = normalize(r);
+            break;
 
 		default:
 			break;
@@ -240,27 +309,38 @@ void keyboardListener(unsigned char key, int x,int y){
 
 void specialKeyListener(int key, int x,int y){
 	switch(key){
-	    	//pos.y++;
-			//pos.y--;
-			//pos.z++;
-			//pos.z--;
+
 		case GLUT_KEY_DOWN:		//down arrow key
-			cameraHeight -= 3.0;
+			pos.x -= 2*l.x;
+			pos.y -= 2*l.y;
+			pos.z -= 2*l.z;
 			break;
 		case GLUT_KEY_UP:		// up arrow key
-			cameraHeight += 3.0;
+			pos.x += 2*l.x;
+			pos.y += 2*l.y;
+			pos.z += 2*l.z;
 			break;
 
 		case GLUT_KEY_RIGHT:
-			cameraAngle += 0.03;
+			pos.x += 2*r.x;
+			pos.y += 2*r.y;
+			pos.z += 2*r.z;
 			break;
 		case GLUT_KEY_LEFT:
-			cameraAngle -= 0.03;
+			pos.x -= 2*r.x;
+			pos.y -= 2*r.y;
+			pos.z -= 2*r.z;
 			break;
 
 		case GLUT_KEY_PAGE_UP:
+		    pos.x += 2*u.x;
+			pos.y += 2*u.y;
+			pos.z += 2*u.z;
 			break;
 		case GLUT_KEY_PAGE_DOWN:
+			pos.x -= 2*u.x;
+			pos.y -= 2*u.y;
+			pos.z -= 2*u.z;
 			break;
 
 		case GLUT_KEY_INSERT:
