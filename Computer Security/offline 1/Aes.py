@@ -21,7 +21,7 @@ Sbox = [
     [0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16],
 ]
 
-# key preprocessing ----------------------
+# key preprocessing ---------------------------------------------------------------------------------
 
 def key_func(key1):
 
@@ -109,14 +109,22 @@ def key_func(key1):
     return ws
 
 
-# Cipher -------------------------------------------------
+# Cipher ---------------------------------------------------------------------------------------------
 
-def cipher_func(s):
+def cipher_func(s, typp):
 
     matrix1 = []
     arr2 = []
-    for c in s:
-        arr2.append(ord(c))
+
+    if typp == 1: 
+        for c in s:
+            arr2.append(ord(c))
+    
+    if typp == 2:
+        for c in range(16):
+            cst = s[2*c:2*c+2]
+            arr2.append(int(cst, 16))
+
 
     for i in range(4):
         matrix1.append(arr2[i*4:i*4+4])
@@ -211,7 +219,7 @@ def cipher_func(s):
 
     return cyphertext
 
-# Decipher --------------------------------------------------
+# Decipher ---------------------------------------------------------------------------------------------
 
 def decipher_func(cyphertext2):
 
@@ -327,12 +335,21 @@ def decipher_func(cyphertext2):
     
     return Deciphered_text    
 
+
+# End of Decipher ---------------------------------------------------------------------------------------
+
+
+
+# INPUT OUTPUT ------------------------------------------------------------------------------------------
+
+
+
 #s1 = "Two One Nine Two"
 #key1 = "Thats my Kung Fu"
 
 key1 = "BUET CSE16 Batch"
 
-s1 = "WillGraduateSoon Thats my"
+s1 = "WillGraduateSoon2022"
 s = ""
 
 if len(s1) % 16 != 0:
@@ -347,12 +364,16 @@ ws = key_func(key1)
 rr = time()
 t1 = rr - ll
 
+
+ciphered = cipher_func(s, 1)
+print(ciphered)
+
 print("Cipher Text: ")
 ll = time()
 no_block = len(s)//16
 ciphered = ""
 for ii in range(no_block):
-    ciphered += cipher_func(s[ii*16:ii*16+16])
+    ciphered += cipher_func(s[ii*16:ii*16+16], 1)
 rr = time()
 t2 = rr - ll
 
@@ -368,6 +389,7 @@ for ii in range(no_block):
 print("Deciphered Text: ")
 print(Deciphered_text, end = ' ')
 print(" [In HEX]")
+
 
 rr = time()
 t3 = rr - ll
@@ -387,5 +409,104 @@ print("seconds")
 
 
 
+
+# FILE ENCRYPTION ---------------------------------------------------------------------------------------------
+
+input_file = "in.txt"
+output_file = "out.txt"
+output_file2 = "out2.txt"
+
+def encrypt_file():
+    file1 = open(input_file, 'rb')
+    file2 = open(output_file, 'wb')
+    while True:
+        data = file1.read(16)
+        if not data:
+            break
+        pltext = data.hex()
+        while len(pltext) != 32:
+            pltext = pltext + "20"
+        ciphered = cipher_func(pltext, 2)
+        file2.write(ciphered.encode())
+        
+    file1.close()
+    file2.close()
+
+encrypt_file()
+
+
+def decrypt_file():
+    file1 = open(output_file, 'rb')
+    file2 = open(output_file2, 'wb')
+    while True:
+        data = file1.read(32)
+        if not data:
+            break
+        pltext = data
+        pltext = data.decode('utf-8')
+        pltext2 = decipher_func(pltext)
+        pltext2 = bytes.fromhex(pltext2)
+        file2.write(pltext2)
+    file1.close()
+    file2.close()
+
+decrypt_file()
+
+
+# FILE ENCRYPTION END ---------------------------------------------------------------------------------------------
+
+
+# S-box and Inv S-box   -------------------------------------------------------------------------------------------
+
+
+def print_16_box(arr):
+    for i in range(0, 16):
+        for j in range(0, 16):
+            print(hex(arr[i * 16 + j]).lstrip("0x").rjust(2, '0'), end=' ')
+        print()
+
+def generate_sbox():
+    boxx = []
+    AES_modulus = BitVector(bitstring='100011011')
+    bv = BitVector(intVal=0x63, size=8)
+    count = 1
+    
+    for i in range(16):
+        for j in range(16):
+            if i == 0 and j == 0:
+                boxx.append(0x63)
+                continue    
+            a = BitVector(intVal=count, size=8)
+            b = a.gf_MI(AES_modulus, 8)
+            z = bv ^ b ^ (b << 1) ^ (b << 1) ^ (b << 1) ^ (b << 1)  
+            boxx.append(z.intValue())
+            count +=1
+
+    return boxx
+
+def generate_inv_sbox():
+    boxx = []
+    AES_modulus = BitVector(bitstring='100011011')
+    bv = BitVector(intVal=0x5, size=8)
+    count = 0
+    
+    for i in range(16):
+        for j in range(16):
+            if count == 0x63:
+                boxx.append(0)
+                count += 1
+                continue    
+            a = BitVector(intVal=count, size=8)
+            b = bv ^ (a<<1) ^ (a<<2) ^ (a<<3)
+            z = b.gf_MI(AES_modulus, 8)  
+            boxx.append(z.intValue())
+            count +=1
+            
+    return boxx
+
+# arr = generate_inv_sbox()
+# print_16_box(arr)
+
+# End of S-box and Inv S-box   ------------------------------------------------------------------------------------
 
 
