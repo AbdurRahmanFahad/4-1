@@ -554,7 +554,7 @@ void drawSS()
 
     glTranslatef(0,30,0);
 
-    boro_half_circle2();
+    //boro_half_circle2();
     boro_half_circle1();
     draw_half_circle();
     glTranslatef(0,11,0);
@@ -804,14 +804,7 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 	switch(button){
 		case GLUT_LEFT_BUTTON:
 			if(state == GLUT_DOWN){		// 2 times?? in ONE click? -- solution is checking DOWN or UP
-				drawaxes=1-drawaxes;
-			}
-			break;
 
-		case GLUT_RIGHT_BUTTON:
-			//........
-			if(state == GLUT_DOWN)
-            {
 				double z_value = 250*(l_gun.z/l_gun.y);
 				double x_value = 250*(l_gun.x/l_gun.y);
 				if(x_value<=110 && x_value>=-110 && z_value<=110 && z_value>=-110)
@@ -821,6 +814,15 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
                     gunshots++;
                     cout<<"GUNSHOT"<<endl;
                 }
+			}
+			break;
+
+		case GLUT_RIGHT_BUTTON:
+			//........
+			if(state == GLUT_DOWN)
+            {
+                drawaxes=1-drawaxes;
+
 			}
 			break;
 
