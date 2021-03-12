@@ -18,7 +18,6 @@ double angle;
 double theta_xy;
 double theta_yz;
 double theta_xz;
-int lock = 0;
 int gunshots = 0;
 
 double shots[100][2];
@@ -121,7 +120,7 @@ void drawSquare(double a)
 
 void drawPlane()
 {
-    double a = 110;
+    double a = 112;
     glColor3f(0.7,0.7,0.7);
 	glBegin(GL_QUADS);{
 		glVertex3f( a, 250,a);
@@ -131,16 +130,245 @@ void drawPlane()
 	}glEnd();
 }
 
-void drawPlane2()
+
+void draw_half_circle()
 {
-    double a = 110;
-    glColor3f(0.7,0.7,0.7);
-	glBegin(GL_QUADS);{
-		glVertex3f(250, a, a);
-		glVertex3f(250, a,-a);
-		glVertex3f(250,-a,-a);
-		glVertex3f(250,-a, a);
-	}glEnd();
+
+    struct point points[100][100];
+	int i,j;
+	double h,r;
+	//generate points
+	double radius = 11;
+	int stacks = 89, slices = 89;
+	for(i=0;i<=stacks;i++)
+	{
+		h=radius*sin(((double)i/(double)stacks)*(pi/2));
+		r=radius*cos(((double)i/(double)stacks)*(pi/2));
+
+		for(j=0;j<=slices;j++)
+		{
+			points[i][j].x=r*cos(((double)j/(double)slices)*2*pi);
+			points[i][j].z=r*sin(((double)j/(double)slices)*2*pi);
+			points[i][j].y=11-h;
+		}
+	}
+
+
+	//draw quads using generated points
+	int flag = 1;
+	for(i=0;i<stacks;i++)
+	{
+        flag = 1;
+		for(j=0;j<slices;j++)
+		{
+		    if(j%2==0)
+            {
+                if(flag)
+                {
+                    glColor3f(0,0,0);
+                    flag = 0;
+                }
+                else
+                {
+                    glColor3f(0.9,0.9,0.9);
+                    flag = 1;
+
+                }
+            }
+
+
+			glBegin(GL_QUADS);{
+			    glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
+				glVertex3f(points[i][j+1].x,points[i][j+1].y,points[i][j+1].z);
+				glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,points[i+1][j+1].z);
+				glVertex3f(points[i+1][j].x,points[i+1][j].y,points[i+1][j].z);
+
+			}glEnd();
+		}
+	}
+
+
+
+}
+
+void boro_half_circle1()
+{
+
+    struct point points[100][100];
+	int i,j;
+	double h,r;
+	//generate points
+	double radius = 30;
+	int stacks = 89, slices = 89;
+	for(i=0;i<=stacks;i++)
+	{
+		h=radius*sin(((double)i/(double)stacks)*(pi/2));
+		r=radius*cos(((double)i/(double)stacks)*(pi/2));
+
+		for(j=0;j<=slices;j++)
+		{
+			points[i][j].x=r*cos(((double)j/(double)slices)*2*pi);
+			points[i][j].z=r*sin(((double)j/(double)slices)*2*pi);
+			points[i][j].y=h-30;
+		}
+	}
+
+
+	//draw quads using generated points
+	int flag = 1;
+	for(i=0;i<stacks;i++)
+	{
+        flag = 1;
+		for(j=0;j<slices;j++)
+		{
+		    if(j%2==0)
+            {
+                if(flag)
+                {
+                    glColor3f(0,0,0);
+                    flag = 0;
+                }
+                else
+                {
+                    glColor3f(0.9,0.9,0.9);
+                    flag = 1;
+
+                }
+            }
+
+
+			glBegin(GL_QUADS);{
+			    glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
+				glVertex3f(points[i][j+1].x,points[i][j+1].y,points[i][j+1].z);
+				glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,points[i+1][j+1].z);
+				glVertex3f(points[i+1][j].x,points[i+1][j].y,points[i+1][j].z);
+
+			}glEnd();
+		}
+	}
+
+
+
+}
+
+void boro_half_circle2()
+{
+
+    struct point points[100][100];
+	int i,j;
+	double h,r;
+	//generate points
+	double radius = 30;
+	int stacks = 89, slices = 89;
+	for(i=0;i<=stacks;i++)
+	{
+		h=radius*sin(((double)i/(double)stacks)*(pi/2));
+		r=radius*cos(((double)i/(double)stacks)*(pi/2));
+
+		for(j=0;j<=slices;j++)
+		{
+			points[i][j].x=r*cos(((double)j/(double)slices)*2*pi);
+			points[i][j].z=r*sin(((double)j/(double)slices)*2*pi);
+			points[i][j].y=-30-h;
+		}
+	}
+
+
+	//draw quads using generated points
+	int flag = 1;
+	for(i=0;i<stacks;i++)
+	{
+        flag = 1;
+		for(j=0;j<slices;j++)
+		{
+		    if(j%2==0)
+            {
+                if(flag)
+                {
+                    glColor3f(0,0,0);
+                    flag = 0;
+                }
+                else
+                {
+                    glColor3f(0.9,0.9,0.9);
+                    flag = 1;
+
+                }
+            }
+
+
+			glBegin(GL_QUADS);{
+			    glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
+				glVertex3f(points[i][j+1].x,points[i][j+1].y,points[i][j+1].z);
+				glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,points[i+1][j+1].z);
+				glVertex3f(points[i+1][j].x,points[i+1][j].y,points[i+1][j].z);
+
+			}glEnd();
+		}
+	}
+
+
+
+}
+
+
+void drawhorn()
+{
+    struct point points[100][100];
+	int i,j;
+	double h,r, horn_r;
+	//generate points
+	double radius = 11;
+	int stacks = 89, slices = 89;
+	for(i=0;i<=stacks;i++)
+	{
+		h=radius*sin(((double)i/(double)stacks)*(pi/2));
+		r=radius*cos(((double)i/(double)stacks)*(pi/2));
+		horn_r = 3*radius - 2*r;
+
+		for(j=0;j<=slices;j++)
+		{
+			points[i][j].x=horn_r*cos(((double)j/(double)slices)*2*pi);
+			points[i][j].z=horn_r*sin(((double)j/(double)slices)*2*pi);
+			points[i][j].y=h+80;
+		}
+	}
+
+
+	//draw quads using generated points
+	int flag = 1;
+	for(i=0;i<stacks;i++)
+	{
+        flag = 1;
+		for(j=0;j<slices;j++)
+		{
+		    if(j%2==0)
+            {
+                if(flag)
+                {
+                    glColor3f(0,0,0);
+                    flag = 0;
+                }
+                else
+                {
+                    glColor3f(0.9,0.9,0.9);
+                    flag = 1;
+
+                }
+            }
+
+
+			glBegin(GL_QUADS);{
+			    //upper hemisphere
+				glVertex3f(points[i][j].x,points[i][j].y,points[i][j].z);
+				glVertex3f(points[i][j+1].x,points[i][j+1].y,points[i][j+1].z);
+				glVertex3f(points[i+1][j+1].x,points[i+1][j+1].y,points[i+1][j+1].z);
+				glVertex3f(points[i+1][j].x,points[i+1][j].y,points[i+1][j].z);
+
+			}glEnd();
+		}
+	}
+
 }
 
 
@@ -253,19 +481,6 @@ void drawCylinder(double radius,double height,int segments)
         points2[i].z=radius*sin(((double)i/(double)segments)*2*pi);
         points2[i].y=height;
     }
-    //draw segments using generated points
-    /*for(i=0;i<segments;i++)
-    {
-        glBegin(GL_LINES);
-        {
-			glVertex3f(points1[i].x,0,points1[i].z);
-			glVertex3f(points1[i+1].x,0,points1[i+1].z);
-
-			glVertex3f(points2[i].x,points2[i].y,points2[i].z);
-			glVertex3f(points2[i+1].x,points2[i+1].y,points2[i+1].z);
-        }
-        glEnd();
-    }*/
 
     int flag = 1;
     for(i=0;i<segments;i++)
@@ -328,7 +543,7 @@ void drawSS()
     glColor3f(0,1,0);
     glBegin(GL_LINES);{
         glVertex3f(0,0,0);
-        glVertex3f( 60*l_gun.x,60*l_gun.y,60*l_gun.z);
+        glVertex3f( 90*l_gun.x,90*l_gun.y,90*l_gun.z);
     }glEnd();
 
     glColor3f(1,0,0);
@@ -337,9 +552,17 @@ void drawSS()
 
     glRotatef(theta_yz,1,0,0);
 
+    glTranslatef(0,30,0);
+
+    boro_half_circle2();
+    boro_half_circle1();
+    draw_half_circle();
+    glTranslatef(0,11,0);
     glRotatef(theta_xz,0,1,0);
 
-    drawCylinder(11,50,89);
+    drawCylinder(11,80,89);
+    drawhorn();
+
 
 
 
@@ -441,35 +664,35 @@ void keyboardListener(unsigned char key, int x,int y){
         }
         break;
         case 'q':
-            if(theta_xy-45.0<0)
+            if(theta_xy-30.0<0)
             {
                 theta_xy += 1.0;
                 struct point temp = {l_gun.x,l_gun.y,l_gun.z};
-                l_gun.x = temp.x*cos(1*pi/180.0) - temp.y*sin(1*pi/180.0);
-                l_gun.y = temp.y*cos(1*pi/180.0) + temp.x*sin(1*pi/180.0);
+                l_gun.x = temp.x*cos(1.0*pi/180.0) - temp.y*sin(1.0*pi/180.0);
+                l_gun.y = temp.y*cos(1.0*pi/180.0) + temp.x*sin(1.0*pi/180.0);
                 l_gun = normalize(l_gun);
             }
             break;
         case 'w':
-            if(theta_xy+45.0>0)
+            if(theta_xy+30.0>0)
             {
                 theta_xy -= 1.0;
 
                 struct point temp = {l_gun.x,l_gun.y,l_gun.z};
-                l_gun.x = temp.x*cos(2*pi - 1*pi/180.0) - temp.y*sin(2*pi - 1*pi/180.0);
-                l_gun.y = temp.y*cos(2*pi - 1*pi/180.0) + temp.x*sin(2*pi - 1*pi/180.0);
+                l_gun.x = temp.x*cos(2.0*pi - 1.0*pi/180.0) - temp.y*sin(2.0*pi - 1.0*pi/180.0);
+                l_gun.y = temp.y*cos(2.0*pi - 1.0*pi/180.0) + temp.x*sin(2.0*pi - 1.0*pi/180.0);
 
                 l_gun = normalize(l_gun);
             }
             break;
         case 'e':
-            if(theta_yz-45.0<0)
+            if(theta_yz-30.0<0)
             {
                 theta_yz += 1.0;
 
                 struct point temp = {l_gun.x,l_gun.y,l_gun.z};
-                l_gun.y = temp.y*cos(1*pi/180.0) - temp.z*sin(1*pi/180.0);
-                l_gun.z = temp.z*cos(1*pi/180.0) + temp.y*sin(1*pi/180.0);
+                l_gun.y = temp.y*cos(1.0*pi/180.0) - temp.z*sin(1.0*pi/180.0);
+                l_gun.z = temp.z*cos(1.0*pi/180.0) + temp.y*sin(1.0*pi/180.0);
                 l_gun = normalize(l_gun);
 
 
@@ -477,13 +700,14 @@ void keyboardListener(unsigned char key, int x,int y){
 
             break;
         case 'r':
-            if(theta_yz+45.0>0)
+            if(theta_yz+30.0>0)
             {
+
                 theta_yz -= 1.0;
 
                 struct point temp = {l_gun.x,l_gun.y,l_gun.z};
-                l_gun.y = temp.y*cos(2*pi - 1*pi/180.0) - temp.z*sin(2*pi - 1*pi/180.0);
-                l_gun.z = temp.z*cos(2*pi - 1*pi/180.0) + temp.y*sin(2*pi - 1*pi/180.0);
+                l_gun.y = temp.y*cos(2.0*pi - 1.0*pi/180.0) - temp.z*sin(2.0*pi - 1.0*pi/180.0);
+                l_gun.z = temp.z*cos(2.0*pi - 1.0*pi/180.0) + temp.y*sin(2.0*pi - 1.0*pi/180.0);
                 l_gun = normalize(l_gun);
 
             }
@@ -492,7 +716,6 @@ void keyboardListener(unsigned char key, int x,int y){
         case 'd':
             if(theta_xz<30)
             {
-                lock = 1;
                 theta_xz += 1.0;
 
             }
@@ -501,7 +724,6 @@ void keyboardListener(unsigned char key, int x,int y){
         case 'f':
             if(theta_xz>-30)
             {
-                lock = 1;
                 theta_xz -= 1.0;
 
             }
@@ -509,7 +731,22 @@ void keyboardListener(unsigned char key, int x,int y){
 
 		default:
 			break;
+
+
 	}
+
+                /*GLdouble mvmatrix[16];
+                glGetDoublev (GL_TEXTURE_MATRIX, mvmatrix);
+                for(int i = 0; i<4; i++)
+                {
+                    for(int j = 0; j<4; j++)
+                    {
+                        cout<<mvmatrix[i+j]<<" ";
+                    }
+                    cout<<endl;
+                }
+                cout<<endl;*/
+
 }
 
 
