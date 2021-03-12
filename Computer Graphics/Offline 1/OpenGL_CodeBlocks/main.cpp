@@ -15,16 +15,33 @@ double cameraAngle;
 int drawgrid;
 int drawaxes;
 double angle;
+double theta_xy;
+double theta_yz;
+double theta_xz;
+int lock = 0;
+int gunshots = 0;
+
+double shots[100][2];
 
 struct point
 {
 	double x,y,z;
 };
 
-struct point pos = {100,100,50};
+struct point pos = {100,100,60};
 struct point u = {0,0,1};
 struct point r = {-1/sqrt(2),1/sqrt(2),0};
 struct point l = {-1/sqrt(2),-1/sqrt(2),0};
+
+struct point l_gun = {0,1,0};
+
+struct point ttransVect = {0,0,0};
+
+void print_my(struct point u_gun)
+{
+    cout<<u_gun.x<<" "<<u_gun.y<<" "<<u_gun.z<<endl;
+}
+
 
 struct point cross_product(struct point v1, struct point v2)
 {
@@ -54,14 +71,14 @@ void drawAxes()
 	{
 		glColor3f(1.0, 1.0, 1.0);
 		glBegin(GL_LINES);{
-			glVertex3f( 100,0,0);
-			glVertex3f(-100,0,0);
+			glVertex3f( 250,0,0);
+			glVertex3f(-250,0,0);
 
-			glVertex3f(0,-100,0);
-			glVertex3f(0, 100,0);
+			glVertex3f(0,-250,0);
+			glVertex3f(0, 250,0);
 
-			glVertex3f(0,0, 100);
-			glVertex3f(0,0,-100);
+			glVertex3f(0,0, 250);
+			glVertex3f(0,0,-250);
 		}glEnd();
 	}
 }
@@ -99,6 +116,30 @@ void drawSquare(double a)
 		glVertex3f( a,-a,2);
 		glVertex3f(-a,-a,2);
 		glVertex3f(-a, a,2);
+	}glEnd();
+}
+
+void drawPlane()
+{
+    double a = 110;
+    glColor3f(0.7,0.7,0.7);
+	glBegin(GL_QUADS);{
+		glVertex3f( a, 250,a);
+		glVertex3f( a,250,-a);
+		glVertex3f(-a,250,-a);
+		glVertex3f(-a, 250,a);
+	}glEnd();
+}
+
+void drawPlane2()
+{
+    double a = 110;
+    glColor3f(0.7,0.7,0.7);
+	glBegin(GL_QUADS);{
+		glVertex3f(250, a, a);
+		glVertex3f(250, a,-a);
+		glVertex3f(250,-a,-a);
+		glVertex3f(250,-a, a);
 	}glEnd();
 }
 
@@ -195,23 +236,110 @@ void drawSphere(double radius,int slices,int stacks)
 	}
 }
 
+void drawCylinder(double radius,double height,int segments)
+{
+    int i, j;
+    struct point points1[100];
+    struct point points2[100];
+    glColor3f(0.9,0.9,0.9);
+
+    //generate points
+    for(i=0;i<=segments;i++)
+    {
+        points1[i].x=radius*cos(((double)i/(double)segments)*2*pi);
+        points1[i].z=radius*sin(((double)i/(double)segments)*2*pi);
+        points1[i].y=0;
+        points2[i].x=radius*cos(((double)i/(double)segments)*2*pi);
+        points2[i].z=radius*sin(((double)i/(double)segments)*2*pi);
+        points2[i].y=height;
+    }
+    //draw segments using generated points
+    /*for(i=0;i<segments;i++)
+    {
+        glBegin(GL_LINES);
+        {
+			glVertex3f(points1[i].x,0,points1[i].z);
+			glVertex3f(points1[i+1].x,0,points1[i+1].z);
+
+			glVertex3f(points2[i].x,points2[i].y,points2[i].z);
+			glVertex3f(points2[i+1].x,points2[i+1].y,points2[i+1].z);
+        }
+        glEnd();
+    }*/
+
+    int flag = 1;
+    for(i=0;i<segments;i++)
+		{
+		    if(i%2==0)
+            {
+                if(flag)
+                {
+                    glColor3f(0,0,0);
+                    flag = 0;
+                }
+                else
+                {
+                    glColor3f(0.9,0.9,0.9);
+                    flag = 1;
+
+                }
+
+
+            }
+			glBegin(GL_QUADS);{
+			    glVertex3f(points1[i].x,points1[i].y,points1[i].z);
+				glVertex3f(points2[i].x,points2[i].y,points2[i].z);
+				glVertex3f(points2[i+1].x,points2[i+1].y,points2[i+1].z);
+				glVertex3f(points1[i+1].x,points1[i+1].y,points1[i+1].z);
+
+			}glEnd();
+		}
+
+
+}
 
 void drawSS()
 {
     glColor3f(1,0,0);
+    drawPlane();
+
+
+    for(int p = 0; p<gunshots; p++)
+    {
+        double x_value = shots[p][0];
+        double z_value = shots[p][1];
+        glColor3f(1,0,0);
+        float lll = 4.0;
+        glBegin(GL_QUADS);{
+            glVertex3f( x_value+lll, 245,z_value+lll);
+            glVertex3f( x_value+lll, 245,z_value-lll);
+            glVertex3f( x_value-lll, 245,z_value-lll);
+            glVertex3f( x_value-lll, 245,z_value+lll);
+        }glEnd();
+
+    }
 
     //drawSphere(30, 10, 10);
-    drawCone(30, 50, 50);
+    //glTranslatef(ttransVect.x,ttransVect.y,ttransVect.z);
 
+    //drawCone(30, 50, 50);
+    //glTranslatef(40,0,0);
 
+    glColor3f(0,1,0);
+    glBegin(GL_LINES);{
+        glVertex3f(0,0,0);
+        glVertex3f( 60*l_gun.x,60*l_gun.y,60*l_gun.z);
+    }glEnd();
 
+    glColor3f(1,0,0);
 
+    glRotatef(theta_xy,0,0,1);
 
+    glRotatef(theta_yz,1,0,0);
 
+    glRotatef(theta_xz,0,1,0);
 
-
-
-
+    drawCylinder(11,50,89);
 
 
 
@@ -246,59 +374,137 @@ void drawSS()
 }
 
 void keyboardListener(unsigned char key, int x,int y){
+    //print_my(l_gun);
 	switch(key){
 
 		case 'g':
 			drawgrid=1-drawgrid;
 			break;
         case '1':
+        {
             l.x = l.x*cos(2*pi - 3*pi/180.0) + r.x*sin(2*pi - 3*pi/180.0);
             l.y = l.y*cos(2*pi - 3*pi/180.0) + r.y*sin(2*pi - 3*pi/180.0);
             l.z = l.z*cos(2*pi - 3*pi/180.0) + r.z*sin(2*pi - 3*pi/180.0);
             l = normalize(l);
             r = cross_product(l, u);
             r = normalize(r);
-            break;
+        }
+        break;
         case '2':
+        {
             l.x = l.x*cos(3*pi/180.0) + r.x*sin(3*pi/180.0);
             l.y = l.y*cos(3*pi/180.0) + r.y*sin(3*pi/180.0);
             l.z = l.z*cos(3*pi/180.0) + r.z*sin(3*pi/180.0);
             l = normalize(l);
             r = cross_product(l, u);
             r = normalize(r);
-            break;
-
+        }
+        break;
         case '3':
+        {
             l.x = l.x*cos(3*pi/180.0) + u.x*sin(3*pi/180.0);
             l.y = l.y*cos(3*pi/180.0) + u.y*sin(3*pi/180.0);
             l.z = l.z*cos(3*pi/180.0) + u.z*sin(3*pi/180.0);
             l = normalize(l);
             u = cross_product(r, l);
             u = normalize(u);
-            break;
+        }
+        break;
         case '4':
+        {
             l.x = l.x*cos(2*pi - 3*pi/180.0) + u.x*sin(2*pi - 3*pi/180.0);
             l.y = l.y*cos(2*pi - 3*pi/180.0) + u.y*sin(2*pi - 3*pi/180.0);
             l.z = l.z*cos(2*pi - 3*pi/180.0) + u.z*sin(2*pi - 3*pi/180.0);
             l = normalize(l);
             u = cross_product(r, l);
             u = normalize(u);
-            break;
+        }
+        break;
         case '5':
+        {
             u.x = u.x*cos(2*pi - 3*pi/180.0) + r.x*sin(2*pi - 3*pi/180.0);
             u.y = u.y*cos(2*pi - 3*pi/180.0) + r.y*sin(2*pi - 3*pi/180.0);
             u.z = u.z*cos(2*pi - 3*pi/180.0) + r.z*sin(2*pi - 3*pi/180.0);
             u = normalize(u);
             r = cross_product(l, u);
             r = normalize(r);
-            break;
+        }
+        break;
         case '6':
+        {
             u.x = u.x*cos(3*pi/180.0) + r.x*sin(3*pi/180.0);
             u.y = u.y*cos(3*pi/180.0) + r.y*sin(3*pi/180.0);
             u.z = u.z*cos(3*pi/180.0) + r.z*sin(3*pi/180.0);
             u = normalize(u);
             r = cross_product(l, u);
             r = normalize(r);
+        }
+        break;
+        case 'q':
+            if(theta_xy-45.0<0)
+            {
+                theta_xy += 1.0;
+                struct point temp = {l_gun.x,l_gun.y,l_gun.z};
+                l_gun.x = temp.x*cos(1*pi/180.0) - temp.y*sin(1*pi/180.0);
+                l_gun.y = temp.y*cos(1*pi/180.0) + temp.x*sin(1*pi/180.0);
+                l_gun = normalize(l_gun);
+            }
+            break;
+        case 'w':
+            if(theta_xy+45.0>0)
+            {
+                theta_xy -= 1.0;
+
+                struct point temp = {l_gun.x,l_gun.y,l_gun.z};
+                l_gun.x = temp.x*cos(2*pi - 1*pi/180.0) - temp.y*sin(2*pi - 1*pi/180.0);
+                l_gun.y = temp.y*cos(2*pi - 1*pi/180.0) + temp.x*sin(2*pi - 1*pi/180.0);
+
+                l_gun = normalize(l_gun);
+            }
+            break;
+        case 'e':
+            if(theta_yz-45.0<0)
+            {
+                theta_yz += 1.0;
+
+                struct point temp = {l_gun.x,l_gun.y,l_gun.z};
+                l_gun.y = temp.y*cos(1*pi/180.0) - temp.z*sin(1*pi/180.0);
+                l_gun.z = temp.z*cos(1*pi/180.0) + temp.y*sin(1*pi/180.0);
+                l_gun = normalize(l_gun);
+
+
+            }
+
+            break;
+        case 'r':
+            if(theta_yz+45.0>0)
+            {
+                theta_yz -= 1.0;
+
+                struct point temp = {l_gun.x,l_gun.y,l_gun.z};
+                l_gun.y = temp.y*cos(2*pi - 1*pi/180.0) - temp.z*sin(2*pi - 1*pi/180.0);
+                l_gun.z = temp.z*cos(2*pi - 1*pi/180.0) + temp.y*sin(2*pi - 1*pi/180.0);
+                l_gun = normalize(l_gun);
+
+            }
+
+            break;
+        case 'd':
+            if(theta_xz<30)
+            {
+                lock = 1;
+                theta_xz += 1.0;
+
+            }
+
+            break;
+        case 'f':
+            if(theta_xz>-30)
+            {
+                lock = 1;
+                theta_xz -= 1.0;
+
+            }
             break;
 
 		default:
@@ -367,6 +573,18 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 
 		case GLUT_RIGHT_BUTTON:
 			//........
+			if(state == GLUT_DOWN)
+            {
+				double z_value = 250*(l_gun.z/l_gun.y);
+				double x_value = 250*(l_gun.x/l_gun.y);
+				if(x_value<=110 && x_value>=-110 && z_value<=110 && z_value>=-110)
+                {
+                    shots[gunshots][0] = x_value;
+                    shots[gunshots][1] = z_value;
+                    gunshots++;
+                    cout<<"GUNSHOT"<<endl;
+                }
+			}
 			break;
 
 		case GLUT_MIDDLE_BUTTON:
@@ -404,6 +622,7 @@ void display(){
 	//gluLookAt(100,100,100,	0,0,0,	0,0,1);
 	//gluLookAt(200*cos(cameraAngle), 200*sin(cameraAngle), cameraHeight,		0,0,0,		0,0,1);
 	gluLookAt(pos.x,pos.y,pos.z,	pos.x+l.x,pos.y+l.y,pos.z+l.z,	u.x,u.y,u.z);
+    //gluLookAt(pos.x,pos.y,pos.z,	0,0,0,	u.x,u.y,u.z);
 
 
 	//again select MODEL-VIEW
@@ -438,7 +657,7 @@ void display(){
 
 
 void animate(){
-	angle+=0.05;
+	//angle+=0.05;
 	//codes for any changes in Models, Camera
 	glutPostRedisplay();
 }
@@ -450,6 +669,9 @@ void init(){
 	cameraHeight=150.0;
 	cameraAngle=1.0;
 	angle=0;
+	theta_xy = 0;
+	theta_yz = 0;
+	theta_xz = 0;
 
 	//clear the screen
 	glClearColor(0,0,0,0);
@@ -494,3 +716,18 @@ int main(int argc, char **argv){
 
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
