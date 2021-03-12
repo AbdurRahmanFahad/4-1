@@ -60,5 +60,7 @@ that are outside the red circle even partially.
 The program will also support the following functionalities.
 
 `Up arrow` – increase the speed of the bubbles
+
 `Down arrow` – decrease the speed of the bubbles
+
 `p` – resume/pause the movement of the bubbles
