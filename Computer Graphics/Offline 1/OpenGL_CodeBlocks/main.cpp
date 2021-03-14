@@ -10,8 +10,6 @@
 
 using namespace std;
 
-double cameraHeight;
-double cameraAngle;
 int drawgrid;
 int drawaxes;
 double angle;
@@ -535,11 +533,6 @@ void drawSS()
 
     }
 
-    //drawSphere(30, 10, 10);
-    //glTranslatef(ttransVect.x,ttransVect.y,ttransVect.z);
-
-    //drawCone(30, 50, 50);
-    //glTranslatef(40,0,0);
 
     glColor3f(0,1,0);
     glBegin(GL_LINES);{
@@ -565,37 +558,6 @@ void drawSS()
 
     drawCylinder(11,80,89);
     drawhorn();
-
-
-
-
-
-    /*{
-
-
-    glRotatef(angle,0,0,1);
-    glTranslatef(110,0,0);
-    glRotatef(2*angle,0,0,1);
-    glColor3f(0,1,0);
-    drawSquare(15);
-
-    glPushMatrix();
-    {
-        glRotatef(angle,0,0,1);
-        glTranslatef(60,0,0);
-        glRotatef(2*angle,0,0,1);
-        glColor3f(0,0,1);
-        drawSquare(10);
-    }
-    glPopMatrix();
-
-    glRotatef(3*angle,0,0,1);
-    glTranslatef(40,0,0);
-    glRotatef(4*angle,0,0,1);
-    glColor3f(1,1,0);
-    drawSquare(5);
-
-    */
 
 }
 
@@ -752,17 +714,6 @@ void keyboardListener(unsigned char key, int x,int y){
 
 	}
 
-                /*GLdouble mvmatrix[16];
-                glGetDoublev (GL_TEXTURE_MATRIX, mvmatrix);
-                for(int i = 0; i<4; i++)
-                {
-                    for(int j = 0; j<4; j++)
-                    {
-                        cout<<mvmatrix[i+j]<<" ";
-                    }
-                    cout<<endl;
-                }
-                cout<<endl;*/
 
 }
 
@@ -803,14 +754,6 @@ void specialKeyListener(int key, int x,int y){
 			pos.z -= 2*u.z;
 			break;
 
-		case GLUT_KEY_INSERT:
-			break;
-
-		case GLUT_KEY_HOME:
-			break;
-		case GLUT_KEY_END:
-			break;
-
 		default:
 			break;
 	}
@@ -843,10 +786,6 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 			}
 			break;
 
-		case GLUT_MIDDLE_BUTTON:
-			//........
-			break;
-
 		default:
 			break;
 	}
@@ -856,65 +795,29 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 
 void display(){
 
-	//clear the display
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0,0,0,0);	//color black
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	/********************
-	/ set-up camera here
-	********************/
-	//load the correct matrix -- MODEL-VIEW matrix
 	glMatrixMode(GL_MODELVIEW);
 
-	//initialize the matrix
 	glLoadIdentity();
 
-	//now give three info
-	//1. where is the camera (viewer)?
-	//2. where is the camera looking?
-	//3. Which direction is the camera's UP direction?
-
-	//gluLookAt(100,100,100,	0,0,0,	0,0,1);
-	//gluLookAt(200*cos(cameraAngle), 200*sin(cameraAngle), cameraHeight,		0,0,0,		0,0,1);
 	gluLookAt(pos.x,pos.y,pos.z,	pos.x+l.x,pos.y+l.y,pos.z+l.z,	u.x,u.y,u.z);
-    //gluLookAt(pos.x,pos.y,pos.z,	0,0,0,	u.x,u.y,u.z);
+    glMatrixMode(GL_MODELVIEW);
 
-
-	//again select MODEL-VIEW
-	glMatrixMode(GL_MODELVIEW);
-
-
-	/****************************
-	/ Add your objects from here
-	****************************/
-	//add objects
 
 	drawAxes();
 	drawGrid();
 
-    //glColor3f(1,0,0);
-    //drawSquare(10);
 
     drawSS();
 
-    //drawCircle(30,24);
-
-    //drawCone(20,50,24);
-
-	//drawSphere(30,24,20);
-
-
-
-
-	//ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
 	glutSwapBuffers();
 }
 
 
 void animate(){
-	//angle+=0.05;
-	//codes for any changes in Models, Camera
 	glutPostRedisplay();
 }
 
@@ -922,31 +825,19 @@ void init(){
 	//codes for initialization
 	drawgrid=0;
 	drawaxes=1;
-	cameraHeight=150.0;
-	cameraAngle=1.0;
 	angle=0;
 	theta_xy = 0;
 	theta_yz = 0;
 	theta_xz = 0;
 
-	//clear the screen
 	glClearColor(0,0,0,0);
 
-	/************************
-	/ set-up projection here
-	************************/
-	//load the PROJECTION matrix
 	glMatrixMode(GL_PROJECTION);
 
-	//initialize the matrix
 	glLoadIdentity();
 
-	//give PERSPECTIVE parameters
 	gluPerspective(80,	1,	1,	1000.0);
-	//field of view in the Y (vertically)
-	//aspect ratio that determines the field of view in the X direction (horizontally)
-	//near distance
-	//far distance
+
 }
 
 int main(int argc, char **argv){
