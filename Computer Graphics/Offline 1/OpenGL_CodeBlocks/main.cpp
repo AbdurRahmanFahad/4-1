@@ -18,6 +18,7 @@ double angle;
 double theta_xy;
 double theta_yz;
 double theta_xz;
+double theta_gun = 0;
 int gunshots = 0;
 
 double shots[100][2];
@@ -554,11 +555,13 @@ void drawSS()
 
     glTranslatef(0,30,0);
 
-    //boro_half_circle2();
+    boro_half_circle2();
     boro_half_circle1();
+
+    glRotatef(theta_gun,1,0,0);
+    glRotatef(theta_xz,0,1,0);
     draw_half_circle();
     glTranslatef(0,11,0);
-    glRotatef(theta_xz,0,1,0);
 
     drawCylinder(11,80,89);
     drawhorn();
@@ -725,6 +728,20 @@ void keyboardListener(unsigned char key, int x,int y){
             if(theta_xz>-30)
             {
                 theta_xz -= 1.0;
+
+            }
+            break;
+        case 'a':
+            if(theta_gun<30)
+            {
+                theta_gun += 1.0;
+
+            }
+            break;
+        case 's':
+            if(theta_gun>-30)
+            {
+                theta_gun -= 1.0;
 
             }
             break;
