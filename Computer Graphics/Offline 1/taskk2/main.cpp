@@ -15,29 +15,13 @@ struct point
 	double x,y,z;
 };
 
-struct point u = {0,0,1};
-
-
 int N = 5;
 struct point pos_bubble[5];
 struct point vect_bubble[5];
 float b1_speed = 1;
 int is_inside[5] = {0};
 
-
 int is_paused = 1;
-
-
-
-void print_my(struct point u_gun)
-{
-    cout<<u_gun.x<<" "<<u_gun.y<<" "<<u_gun.z<<endl;
-}
-
-void print_my2(struct point u_gun)
-{
-    cout<<u_gun.x<<" "<<u_gun.y<<" "<<u_gun.z<<" ";
-}
 
 struct point normalize(struct point v)
 {
@@ -59,31 +43,11 @@ struct point get_reflection(struct point v1, struct point v2)
 
     double dot = v1.x*v2.x + v1.y*v2.y;
 
-
-    /*if(dot>0)
-    {
-        v2.x *= -1;
-        v2.y *= -1;
-        v2 = normalize(v2);
-        dot = v1.x*v2.x + v1.y*v2.y;
-    }*/
     res.x = v1.x - 2*dot*v2.x;
     res.y = v1.y - 2*dot*v2.y;
 
 
     return normalize(res);
-};
-
-
-struct point cross_product(struct point v1, struct point v2)
-{
-    struct point res = {0,0,0};
-
-    res.x = v1.y*v2.z - v1.z*v2.y;
-    res.y = v1.z*v2.x - v1.x*v2.z;
-    res.z = v1.x*v2.y - v1.y*v2.x;
-
-    return res;
 };
 
 
@@ -143,10 +107,6 @@ void drawSS()
 
     drawSquare(250);
 
-    //glTranslatef(30,30,0);
-
-    //glTranslatef(b1_vect.x*b1_trans, b1_vect.y*b1_trans, 0);
-
     glColor3f(0,0,0.7);
 
     for(int i = 0; i<N; i++)
@@ -173,34 +133,6 @@ void drawSS()
     glTranslatef(250, 250, 0);
     drawCircle(150, 70);
 
-
-    /*{
-
-
-    glRotatef(angle,0,0,1);
-    glTranslatef(110,0,0);
-    glRotatef(2*angle,0,0,1);
-    glColor3f(0,1,0);
-    drawSquare(15);
-
-    glPushMatrix();
-    {
-        glRotatef(angle,0,0,1);
-        glTranslatef(60,0,0);
-        glRotatef(2*angle,0,0,1);
-        glColor3f(0,0,1);
-        drawSquare(10);
-    }
-    glPopMatrix();
-
-    glRotatef(3*angle,0,0,1);
-    glTranslatef(40,0,0);
-    glRotatef(4*angle,0,0,1);
-    glColor3f(1,1,0);
-    drawSquare(5);
-
-    */
-
 }
 
 void keyboardListener(unsigned char key, int x,int y){
@@ -223,11 +155,13 @@ void keyboardListener(unsigned char key, int x,int y){
 void specialKeyListener(int key, int x,int y){
 	switch(key){
 
-		case GLUT_KEY_DOWN:		//down arrow key
-
+		case GLUT_KEY_DOWN:
+		    if(b1_speed>.5)		//down arrow key
+            b1_speed -= .1;
 			break;
 		case GLUT_KEY_UP:		// up arrow key
-
+            if(b1_speed<2)		//down arrow key
+            b1_speed += .1;
 			break;
 
 		default:
@@ -242,15 +176,6 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 
 			break;
 
-		case GLUT_RIGHT_BUTTON:
-			//........
-
-			break;
-
-		case GLUT_MIDDLE_BUTTON:
-			//........
-			break;
-
 		default:
 			break;
 	}
@@ -258,64 +183,26 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 
 
 void display(){
-
-	//clear the display
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0,0,0,0);	//color black
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	/********************
-	/ set-up camera here
-	********************/
-	//load the correct matrix -- MODEL-VIEW matrix
 	glMatrixMode(GL_MODELVIEW);
 
-	//initialize the matrix
 	glLoadIdentity();
 
-	//now give three info
-	//1. where is the camera (viewer)?
-	//2. where is the camera looking?
-	//3. Which direction is the camera's UP direction?
-
-	//gluLookAt(100,100,100,	0,0,0,	0,0,1);
-	//gluLookAt(200*cos(cameraAngle), 200*sin(cameraAngle), cameraHeight,		0,0,0,		0,0,1);
 	gluLookAt(250,-250,360,	250,-250,0,	1,0,0);
-    //gluLookAt(pos.x,pos.y,pos.z,	0,0,0,	u.x,u.y,u.z);
-
-
-	//again select MODEL-VIEW
-	glMatrixMode(GL_MODELVIEW);
-
-
-	/****************************
-	/ Add your objects from here
-	****************************/
-	//add objects
+    glMatrixMode(GL_MODELVIEW);
 
 	drawAxes();
 
-    //glColor3f(1,0,0);
-    //drawSquare(10);
+     drawSS();
 
-    drawSS();
-
-    //drawCircle(30,24);
-
-    //drawCone(20,50,24);
-
-	//drawSphere(30,24,20);
-
-
-
-
-	//ADD this line in the end --- if you use double buffer (i.e. GL_DOUBLE)
-	glutSwapBuffers();
+ 	glutSwapBuffers();
 }
 
 
 void animate(){
-	//angle+=0.05;
 	if(!is_paused)
     {
         for(int i = 0; i<N; i++)
@@ -368,10 +255,8 @@ void animate(){
                     double xx = pos_bubble[p].x-pos_bubble[q].x;
                     double yy = pos_bubble[p].y-pos_bubble[q].y;
 
-                    if( xx*xx + yy*yy < 40.1*40)
+                    if( xx*xx + yy*yy < 40.2*40.2)
                     {
-                        //struct point temp = { -yy,xx, 0};
-                        //struct point temp3 = { yy,-xx, 0};
                         struct point temp = { -xx,-yy, 0};
                         struct point temp3 = { xx,yy, 0};
 
@@ -394,14 +279,10 @@ void animate(){
 
     }
 
-
-
-	//codes for any changes in Models, Camera
 	glutPostRedisplay();
 }
 
 void init(){
-	//codes for initialization
 	double pp = 60;
     for(int i = 0; i<N; i++)
     {
@@ -414,20 +295,13 @@ void init(){
     vect_bubble[3] = {.3578, .55, 0};
     vect_bubble[4] = {.3578, .39, 0};
 
-
-	//clear the screen
 	glClearColor(0,0,0,0);
 
-	/************************
-	/ set-up projection here
-	************************/
-	//load the PROJECTION matrix
+
 	glMatrixMode(GL_PROJECTION);
 
-	//initialize the matrix
 	glLoadIdentity();
 
-	//give PERSPECTIVE parameters
 	gluPerspective(80,	1,	1,	1000.0);
 
 }
