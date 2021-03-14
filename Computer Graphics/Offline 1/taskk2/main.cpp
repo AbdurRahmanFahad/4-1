@@ -18,10 +18,10 @@ struct point
 struct point u = {0,0,1};
 
 
-
+int N = 5;
 struct point pos_bubble[5];
 struct point vect_bubble[5];
-float b1_speed = 3;
+float b1_speed = 1;
 int is_inside[5] = {0};
 
 
@@ -39,6 +39,41 @@ void print_my2(struct point u_gun)
     cout<<u_gun.x<<" "<<u_gun.y<<" "<<u_gun.z<<" ";
 }
 
+struct point normalize(struct point v)
+{
+    struct point res = {0,0,0};
+    double modulas = sqrt(v.x*v.x+v.y*v.y+v.z*v.z);
+    res.x = v.x/modulas;
+    res.y = v.y/modulas;
+    res.z = v.z/modulas;
+
+    return res;
+};
+
+
+struct point get_reflection(struct point v1, struct point v2)
+{
+    struct point res = {0,0,0};
+
+    v2 = normalize(v2);
+
+    double dot = v1.x*v2.x + v1.y*v2.y;
+
+    if(dot>0)
+    {
+        v2.x *= -1;
+        v2.y *= -1;
+        v2 = normalize(v2);
+        dot = v1.x*v2.x + v1.y*v2.y;
+    }
+    res.x = v1.x - 2*dot*v2.x;
+    res.y = v1.y - 2*dot*v2.y;
+
+
+    return normalize(res);
+};
+
+
 struct point cross_product(struct point v1, struct point v2)
 {
     struct point res = {0,0,0};
@@ -50,16 +85,6 @@ struct point cross_product(struct point v1, struct point v2)
     return res;
 };
 
-struct point normalize(struct point v)
-{
-    struct point res = {0,0,0};
-    double modulas = sqrt(v.x*v.x+v.y*v.y+v.z*v.z);
-    res.x = v.x/modulas;
-    res.y = v.y/modulas;
-    res.z = v.z/modulas;
-
-    return res;
-};
 
 void drawAxes()
 {
@@ -123,20 +148,21 @@ void drawSS()
 
     glColor3f(0,0,0.7);
 
-    for(int i = 0; i<5; i++)
+    for(int i = 0; i<N; i++)
     {
         glPushMatrix();
         {
             glTranslatef(pos_bubble[i].x,pos_bubble[i].y,pos_bubble[i].z);
-            drawCircle(30, 60);
-            if(pos_bubble[i].y>500-30 || pos_bubble[i].y<30)
+            drawCircle(20, 40);
+            if(pos_bubble[i].y>500-20 || pos_bubble[i].y<20)
             {
                 vect_bubble[i].y *= -1;
             }
-            if(pos_bubble[i].x>500-30 || pos_bubble[i].x<30)
+            if(pos_bubble[i].x>500-20 || pos_bubble[i].x<20)
             {
                 vect_bubble[i].x *= -1;
             }
+
         }
         glPopMatrix();
     }
@@ -291,25 +317,25 @@ void animate(){
 	//angle+=0.05;
 	if(!is_paused)
     {
-        for(int i = 0; i<5; i++)
+        for(int i = 0; i<N; i++)
         {
             pos_bubble[i].x = pos_bubble[i].x + b1_speed*vect_bubble[i].x;
             pos_bubble[i].y = pos_bubble[i].y + b1_speed*vect_bubble[i].y;
 
 
-            if( (pos_bubble[i].x-250)*(pos_bubble[i].x-250) +( pos_bubble[i].y-250)*(pos_bubble[i].y-250) < 120*120 )
-            {
+            if( (pos_bubble[i].x-250)*(pos_bubble[i].x-250) +( pos_bubble[i].y-250)*(pos_bubble[i].y-250) < 130*130 )
                 is_inside[i] = 1;
-            }
 
             vect_bubble[i] = normalize(vect_bubble[i]);
 
             if(is_inside[i])
             {
-                double contact_x = pos_bubble[i].x + 30*vect_bubble[i].x;
-                double contact_y = pos_bubble[i].y + 30*vect_bubble[i].y;
+                double contact_x = pos_bubble[i].x + 20*vect_bubble[i].x;
+                double contact_y = pos_bubble[i].y + 20*vect_bubble[i].y;
+                double check1 = (contact_x-250)*(contact_x-250) + (contact_y-250)*(contact_y-250);
+                double check2 = (pos_bubble[i].x-250)*(pos_bubble[i].x-250) + (pos_bubble[i].y-250)*(pos_bubble[i].y-250);
 
-                if( (contact_x-250)*(contact_x-250) + (contact_y-250)*(contact_y-250) >= 150*150 )
+                if( check1 >= 149*149  || check2 >= 130*130)
                 {
                     struct point normal = {250 - contact_x, 250 - contact_y, 0};
                     normal = normalize(normal);
@@ -326,7 +352,37 @@ void animate(){
             }
 
 
+
         }
+
+
+
+        for(int p = 0; p<N; p++)
+                {
+                    for(int q = p+1; q<N; q++)
+                    {
+                        //if(is_inside[p]!=1 || is_inside[q]!=1)
+                            //continue;
+
+                        double xx = pos_bubble[p].x-pos_bubble[q].x;
+                        double yy = pos_bubble[p].y-pos_bubble[q].y;
+
+                        if( xx*xx + yy*yy < 40.1*40.1)
+                        {
+                            struct point temp1 = get_reflection(vect_bubble[p], vect_bubble[q]);
+                            struct point temp2 = get_reflection(vect_bubble[q], vect_bubble[p]);
+
+                            vect_bubble[p].x = temp1.x;
+                            vect_bubble[p].y = temp1.y;
+                            vect_bubble[q].x = temp2.x;
+                            vect_bubble[q].y = temp2.y;
+                        }
+                    }
+
+                }
+
+
+
     }
 
 
@@ -337,12 +393,14 @@ void animate(){
 
 void init(){
 	//codes for initialization
-    for(int i = 0; i<5; i++)
+	double pp = 60;
+    for(int i = 0; i<N; i++)
     {
-        pos_bubble[i] = {30,30,0};
+        pos_bubble[i] = {30+pp,30+pp,0};
+        pp += 60;
     }
-    vect_bubble[0] = {.3578, .82, 0};
-    vect_bubble[1] = {.3578, -.24, 0};
+    vect_bubble[0] = {.1, .82, 0};
+    vect_bubble[1] = {.1, -.24, 0};
     vect_bubble[2] = {.49, .22, 0};
     vect_bubble[3] = {.3578, .55, 0};
     vect_bubble[4] = {.3578, .39, 0};
