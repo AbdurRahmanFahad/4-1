@@ -16,25 +16,13 @@ struct point
 };
 
 struct point u = {0,0,1};
-struct point b1_pos = {30, 30, 0};
-struct point b1_vect = {.3578, 1, 0};
-float b1_speed = 3, b1_trans = 0;
 
-struct point b2_pos = {370, 30, 0};
-struct point b2_vect = {.3578, -.24, 0};
-float b2_speed = 3, b2_trans = 0;
 
-struct point b3_pos = {30, 370, 0};
-struct point b3_vect = {.3578, 1, 0};
-float b3_speed = 3, b3_trans = 0;
 
-struct point b4_pos = {80, 200, 0};
-struct point b4_vect = {.3578, .55, 0};
-float b4_speed = 3, b4_trans = 0;
-
-struct point b5_pos = {330, 110, 0};
-struct point b5_vect = {.3578, .39, 0};
-float b5_speed = 3, b5_trans = 0;
+struct point pos_bubble[5];
+struct point vect_bubble[5];
+float b1_speed = 3;
+int is_inside[5] = {0};
 
 
 int is_paused = 1;
@@ -76,7 +64,7 @@ struct point normalize(struct point v)
 void drawAxes()
 {
 
-		glColor3f(1.0, 0, 0);
+		glColor3f(0, 0.7, 0);
 		glBegin(GL_LINES);{
 			glVertex3f( 500,0,0);
 			glVertex3f(-500,0,0);
@@ -88,7 +76,7 @@ void drawAxes()
 
 void drawSquare(double a)
 {
-    glColor3f(1.0,0.0,0.0);
+    glColor3f(0,0.7,0);
 	glBegin(GL_LINES);{
 			glVertex3f( 2*a,2*a,0);
 			glVertex3f( 0,2*a,0);
@@ -103,7 +91,7 @@ void drawCircle(double radius,int segments)
 {
     int i;
     struct point points[100];
-    glColor3f(0,0.7,0);
+
     //generate points
     for(i=0;i<=segments;i++)
     {
@@ -132,81 +120,31 @@ void drawSS()
     //glTranslatef(30,30,0);
 
     //glTranslatef(b1_vect.x*b1_trans, b1_vect.y*b1_trans, 0);
-    glPushMatrix();
-    {
-        glTranslatef(b1_pos.x,b1_pos.y,b1_pos.z);
-        drawCircle(30, 60);
-        if(b1_pos.y>500-30 || b1_pos.y<30)
-        {
-            b1_vect.y *= -1;
-        }
-        if(b1_pos.x>500-30 || b1_pos.x<30)
-        {
-            b1_vect.x *= -1;
-        }
-    }
-    glPopMatrix();
 
-    glPushMatrix();
-    {
-        glTranslatef(b2_pos.x,b2_pos.y,b2_pos.z);
-        drawCircle(30, 60);
-        if(b2_pos.y>500-30 || b2_pos.y<30)
-        {
-            b2_vect.y *= -1;
-        }
-        if(b2_pos.x>500-30 || b2_pos.x<30)
-        {
-            b2_vect.x *= -1;
-        }
-    }
-    glPopMatrix();
+    glColor3f(0,0,0.7);
 
-    glPushMatrix();
+    for(int i = 0; i<5; i++)
     {
-        glTranslatef(b3_pos.x,b3_pos.y,b3_pos.z);
-        drawCircle(30, 60);
-        if(b3_pos.y>500-30 || b3_pos.y<30)
+        glPushMatrix();
         {
-            b3_vect.y *= -1;
+            glTranslatef(pos_bubble[i].x,pos_bubble[i].y,pos_bubble[i].z);
+            drawCircle(30, 60);
+            if(pos_bubble[i].y>500-30 || pos_bubble[i].y<30)
+            {
+                vect_bubble[i].y *= -1;
+            }
+            if(pos_bubble[i].x>500-30 || pos_bubble[i].x<30)
+            {
+                vect_bubble[i].x *= -1;
+            }
         }
-        if(b3_pos.x>500-30 || b3_pos.x<30)
-        {
-            b3_vect.x *= -1;
-        }
+        glPopMatrix();
     }
-    glPopMatrix();
 
-    glPushMatrix();
-    {
-        glTranslatef(b4_pos.x,b4_pos.y,b4_pos.z);
-        drawCircle(30, 60);
-        if(b4_pos.y>500-30 || b4_pos.y<30)
-        {
-            b4_vect.y *= -1;
-        }
-        if(b4_pos.x>500-30 || b4_pos.x<30)
-        {
-            b4_vect.x *= -1;
-        }
-    }
-    glPopMatrix();
 
-    glPushMatrix();
-    {
-        glTranslatef(b5_pos.x,b5_pos.y,b5_pos.z);
-        drawCircle(30, 60);
-        if(b5_pos.y>500-30 || b5_pos.y<30)
-        {
-            b5_vect.y *= -1;
-        }
-        if(b5_pos.x>500-30 || b5_pos.x<30)
-        {
-            b5_vect.x *= -1;
-        }
-    }
-    glPopMatrix();
-
+    glColor3f(1,0,0);
+    glTranslatef(250, 250, 0);
+    drawCircle(150, 70);
 
 
     /*{
@@ -353,46 +291,62 @@ void animate(){
 	//angle+=0.05;
 	if(!is_paused)
     {
-        b1_trans += b1_speed;
-        b1_pos.x = b1_pos.x + b1_speed*b1_vect.x;
-        b1_pos.y = b1_pos.y + b1_speed*b1_vect.y;
-        b1_pos.z = b1_pos.z + b1_speed*b1_vect.z;
-
-        print_my2(b1_pos);
-        print_my2(b2_pos);
-        print_my2(b3_pos);
-        print_my2(b4_pos);
-        print_my2(b5_pos);
-        cout<<endl;
-
-        b2_trans += b2_speed;
-        b2_pos.x = b2_pos.x + b2_speed*b2_vect.x;
-        b2_pos.y = b2_pos.y + b2_speed*b2_vect.y;
-        b2_pos.z = b2_pos.z + b2_speed*b2_vect.z;
-
-        b3_trans += b3_speed;
-        b3_pos.x = b3_pos.x + b3_speed*b3_vect.x;
-        b3_pos.y = b3_pos.y + b3_speed*b3_vect.y;
-        b3_pos.z = b3_pos.z + b3_speed*b3_vect.z;
+        for(int i = 0; i<5; i++)
+        {
+            pos_bubble[i].x = pos_bubble[i].x + b1_speed*vect_bubble[i].x;
+            pos_bubble[i].y = pos_bubble[i].y + b1_speed*vect_bubble[i].y;
 
 
-        b4_trans += b4_speed;
-        b4_pos.x = b4_pos.x + b4_speed*b4_vect.x;
-        b4_pos.y = b4_pos.y + b4_speed*b4_vect.y;
-        b4_pos.z = b4_pos.z + b4_speed*b4_vect.z;
+            if( (pos_bubble[i].x-250)*(pos_bubble[i].x-250) +( pos_bubble[i].y-250)*(pos_bubble[i].y-250) < 120*120 )
+            {
+                is_inside[i] = 1;
+            }
 
-        b5_trans += b5_speed;
-        b5_pos.x = b5_pos.x + b5_speed*b5_vect.x;
-        b5_pos.y = b5_pos.y + b5_speed*b5_vect.y;
-        b5_pos.z = b5_pos.z + b5_speed*b5_vect.z;
+            vect_bubble[i] = normalize(vect_bubble[i]);
 
+            if(is_inside[i])
+            {
+                double contact_x = pos_bubble[i].x + 30*vect_bubble[i].x;
+                double contact_y = pos_bubble[i].y + 30*vect_bubble[i].y;
+
+                if( (contact_x-250)*(contact_x-250) + (contact_y-250)*(contact_y-250) >= 150*150 )
+                {
+                    struct point normal = {250 - contact_x, 250 - contact_y, 0};
+                    normal = normalize(normal);
+                    double dot_value = normal.x*vect_bubble[i].x + normal.y*vect_bubble[i].y;
+                    dot_value *= 2;
+                    normal.x *= dot_value;
+                    normal.y *= dot_value;
+                    vect_bubble[i].x -= normal.x;
+                    vect_bubble[i].y -= normal.y;
+                }
+
+
+
+            }
+
+
+        }
     }
+
+
+
 	//codes for any changes in Models, Camera
 	glutPostRedisplay();
 }
 
 void init(){
 	//codes for initialization
+    for(int i = 0; i<5; i++)
+    {
+        pos_bubble[i] = {30,30,0};
+    }
+    vect_bubble[0] = {.3578, .82, 0};
+    vect_bubble[1] = {.3578, -.24, 0};
+    vect_bubble[2] = {.49, .22, 0};
+    vect_bubble[3] = {.3578, .55, 0};
+    vect_bubble[4] = {.3578, .39, 0};
+
 
 	//clear the screen
 	glClearColor(0,0,0,0);
@@ -408,10 +362,7 @@ void init(){
 
 	//give PERSPECTIVE parameters
 	gluPerspective(80,	1,	1,	1000.0);
-	//field of view in the Y (vertically)
-	//aspect ratio that determines the field of view in the X direction (horizontally)
-	//near distance
-	//far distance
+
 }
 
 int main(int argc, char **argv){
