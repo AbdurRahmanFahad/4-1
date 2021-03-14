@@ -59,13 +59,14 @@ struct point get_reflection(struct point v1, struct point v2)
 
     double dot = v1.x*v2.x + v1.y*v2.y;
 
-    if(dot>0)
+
+    /*if(dot>0)
     {
         v2.x *= -1;
         v2.y *= -1;
         v2 = normalize(v2);
         dot = v1.x*v2.x + v1.y*v2.y;
-    }
+    }*/
     res.x = v1.x - 2*dot*v2.x;
     res.y = v1.y - 2*dot*v2.y;
 
@@ -357,29 +358,37 @@ void animate(){
 
 
 
-        for(int p = 0; p<N; p++)
+            for(int p = 0; p<N; p++)
+            {
+                for(int q = p+1; q<N; q++)
                 {
-                    for(int q = p+1; q<N; q++)
+                    if(is_inside[p]!=1 || is_inside[q]!=1)
+                        continue;
+
+                    double xx = pos_bubble[p].x-pos_bubble[q].x;
+                    double yy = pos_bubble[p].y-pos_bubble[q].y;
+
+                    if( xx*xx + yy*yy < 40.1*40)
                     {
-                        //if(is_inside[p]!=1 || is_inside[q]!=1)
-                            //continue;
+                        //struct point temp = { -yy,xx, 0};
+                        //struct point temp3 = { yy,-xx, 0};
+                        struct point temp = { -xx,-yy, 0};
+                        struct point temp3 = { xx,yy, 0};
 
-                        double xx = pos_bubble[p].x-pos_bubble[q].x;
-                        double yy = pos_bubble[p].y-pos_bubble[q].y;
+                        struct point temp1 = get_reflection(vect_bubble[p], temp);
+                        struct point temp2 = get_reflection(vect_bubble[q], temp3);
 
-                        if( xx*xx + yy*yy < 40.1*40.1)
-                        {
-                            struct point temp1 = get_reflection(vect_bubble[p], vect_bubble[q]);
-                            struct point temp2 = get_reflection(vect_bubble[q], vect_bubble[p]);
+                        vect_bubble[p].x = temp1.x;
+                        vect_bubble[p].y = temp1.y;
 
-                            vect_bubble[p].x = temp1.x;
-                            vect_bubble[p].y = temp1.y;
-                            vect_bubble[q].x = temp2.x;
-                            vect_bubble[q].y = temp2.y;
-                        }
+                        //if(vect_bubble[p].x*vect_bubble[q].x + vect_bubble[p].y*vect_bubble[q].y >0)
+
+                        vect_bubble[q].x = temp2.x;
+                        vect_bubble[q].y = temp2.y;
                     }
-
                 }
+
+            }
 
 
 
