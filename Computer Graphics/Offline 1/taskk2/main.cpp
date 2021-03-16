@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<time.h>
 
 #include <windows.h>
 #include <glut.h>
@@ -15,7 +16,8 @@ struct point
 	double x,y,z;
 };
 
-int N = 5;
+int N = 1;
+int timez = 0;
 struct point pos_bubble[5];
 struct point vect_bubble[5];
 float b1_speed = 1;
@@ -211,7 +213,7 @@ void animate(){
             pos_bubble[i].y = pos_bubble[i].y + b1_speed*vect_bubble[i].y;
 
 
-            if( (pos_bubble[i].x-250)*(pos_bubble[i].x-250) +( pos_bubble[i].y-250)*(pos_bubble[i].y-250) < 130*130 )
+            if( (pos_bubble[i].x-250)*(pos_bubble[i].x-250) +( pos_bubble[i].y-250)*(pos_bubble[i].y-250) < 129*130 )
                 is_inside[i] = 1;
 
             vect_bubble[i] = normalize(vect_bubble[i]);
@@ -220,10 +222,11 @@ void animate(){
             {
                 double contact_x = pos_bubble[i].x + 20*vect_bubble[i].x;
                 double contact_y = pos_bubble[i].y + 20*vect_bubble[i].y;
-                double check1 = (contact_x-250)*(contact_x-250) + (contact_y-250)*(contact_y-250);
+                //double check1 = (contact_x-250)*(contact_x-250) + (contact_y-250)*(contact_y-250);
                 double check2 = (pos_bubble[i].x-250)*(pos_bubble[i].x-250) + (pos_bubble[i].y-250)*(pos_bubble[i].y-250);
 
-                if( check1 >= 149*149  || check2 >= 130*130)
+                //check1 >= 149*149  ||
+                if(  check2 >= 129*130)
                 {
                     struct point normal = {250 - contact_x, 250 - contact_y, 0};
                     normal = normalize(normal);
@@ -239,7 +242,13 @@ void animate(){
 
             }
 
-
+            if(N<5)
+                timez++;
+            if(timez%300==0 && N<5)
+            {
+                N++;
+                //cout<<timez<<" "<<N<<endl;
+            }
 
         }
 
@@ -283,17 +292,21 @@ void animate(){
 }
 
 void init(){
-	double pp = 60;
-    for(int i = 0; i<N; i++)
+
+    for(int i = 0; i<5; i++)
+        pos_bubble[i] = {30,30,0};
+
+    srand(time(0));
+
+    for(int i = 0; i<5; i++)
     {
-        pos_bubble[i] = {30+pp,30+pp,0};
-        pp += 60;
+        double f1 = (double)rand() / RAND_MAX;
+        double f2 = (double)rand() / RAND_MAX;
+        cout<<f1<<" "<<f2<<endl;
+        vect_bubble[i] = {f1,f2,0};
+        vect_bubble[i] = normalize(vect_bubble[i]);
+
     }
-    vect_bubble[0] = {.1, .82, 0};
-    vect_bubble[1] = {.1, -.24, 0};
-    vect_bubble[2] = {.49, .22, 0};
-    vect_bubble[3] = {.3578, .55, 0};
-    vect_bubble[4] = {.3578, .39, 0};
 
 	glClearColor(0,0,0,0);
 
