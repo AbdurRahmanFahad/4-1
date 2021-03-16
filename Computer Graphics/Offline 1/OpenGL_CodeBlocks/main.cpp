@@ -539,7 +539,7 @@ void drawSS()
     glBegin(GL_LINES);{
         glColor3f(0,1,0);
         glVertex3f(gun_point.x,gun_point.y,gun_point.z);
-        glVertex3f( gun_point.x+200.0*relative_gun.x, gun_point.y+200.0*relative_gun.y, gun_point.z+200.0*relative_gun.z);
+        glVertex3f( gun_point.x+200.0*l_gun.x, gun_point.y+200.0*l_gun.y, gun_point.z+200.0*l_gun.z);
     }glEnd();
 
 
@@ -769,7 +769,6 @@ void keyboardListener(unsigned char key, int x,int y){
 
 
 
-
                 gun_point.x = l_gun.x*30;
                 gun_point.y = l_gun.y*30;
                 gun_point.z = l_gun.z*30;
@@ -843,10 +842,17 @@ void keyboardListener(unsigned char key, int x,int y){
             {
                 theta_gun += 1.0;
 
-                struct point temp = {relative_gun.x,relative_gun.y,relative_gun.z};
+
+                struct point temp = {l_gun.x,l_gun.y,l_gun.z};
+                l_gun.y = temp.y*cos(1.0*pi/180.0) - temp.z*sin(1.0*pi/180.0);
+                l_gun.z = temp.z*cos(1.0*pi/180.0) + temp.y*sin(1.0*pi/180.0);
+                l_gun = normalize(l_gun);
+
+
+                /*struct point temp = {relative_gun.x,relative_gun.y,relative_gun.z};
                 relative_gun.y = temp.y*cos(1.0*pi/180.0) - temp.z*sin(1.0*pi/180.0);
                 relative_gun.z = temp.z*cos(1.0*pi/180.0) + temp.y*sin(1.0*pi/180.0);
-                relative_gun = normalize(relative_gun);
+                relative_gun = normalize(relative_gun);*/
 
                 //cout<<atan(relative_gun.z/relative_gun.y)*180.0/pi<<endl;
 
@@ -863,10 +869,16 @@ void keyboardListener(unsigned char key, int x,int y){
             {
                 theta_gun -= 1.0;
 
-                struct point temp = {relative_gun.x,relative_gun.y,relative_gun.z};
+                struct point temp = {l_gun.x,l_gun.y,l_gun.z};
+                l_gun.y = temp.y*cos(2.0*pi - 1.0*pi/180.0) - temp.z*sin(2.0*pi - 1.0*pi/180.0);
+                l_gun.z = temp.z*cos(2.0*pi - 1.0*pi/180.0) + temp.y*sin(2.0*pi - 1.0*pi/180.0);
+                l_gun = normalize(l_gun);
+
+
+                /*struct point temp = {relative_gun.x,relative_gun.y,relative_gun.z};
                 relative_gun.y = temp.y*cos(2.0*pi - 1.0*pi/180.0) - temp.z*sin(2.0*pi - 1.0*pi/180.0);
                 relative_gun.z = temp.z*cos(2.0*pi - 1.0*pi/180.0) + temp.y*sin(2.0*pi - 1.0*pi/180.0);
-                relative_gun = normalize(relative_gun);
+                relative_gun = normalize(relative_gun);*/
 
                 actual_gun.x = l_gun.x + relative_gun.x;
                 actual_gun.y = l_gun.y + relative_gun.y;
@@ -936,8 +948,8 @@ void mouseListener(int button, int state, int x, int y){	//x, y is the x-y of th
 		case GLUT_LEFT_BUTTON:
 			if(state == GLUT_DOWN){		// 2 times?? in ONE click? -- solution is checking DOWN or UP
 
-				double z_value = 250*(l_gun.z/l_gun.y);
-				double x_value = 250*(l_gun.x/l_gun.y);
+				double z_value = (250-gun_point.y)*(l_gun.z/l_gun.y);
+				double x_value = (250-gun_point.y)*(l_gun.x/l_gun.y);
 				if(x_value<=110 && x_value>=-110 && z_value<=110 && z_value>=-110)
                 {
                     shots[gunshots][0] = x_value;
