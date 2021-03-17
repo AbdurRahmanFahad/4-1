@@ -264,7 +264,7 @@ void animate(){
                     double xx = pos_bubble[p].x-pos_bubble[q].x;
                     double yy = pos_bubble[p].y-pos_bubble[q].y;
 
-                    if( xx*xx + yy*yy < 40.2*40.2)
+                    if( xx*xx + yy*yy < 40.2*40)
                     {
                         struct point temp = { -xx,-yy, 0};
                         struct point temp3 = { xx,yy, 0};
