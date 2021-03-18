@@ -104,6 +104,87 @@ void drawCircle(double radius,int segments)
 
 void drawSS()
 {
+
+
+
+    if(!is_paused)
+    {
+
+        for(int i = 0; i<N; i++){
+
+            if( (pos_bubble[i].x-250)*(pos_bubble[i].x-250) +( pos_bubble[i].y-250)*(pos_bubble[i].y-250) < 129*130 )
+                is_inside[i] = 1;
+
+            vect_bubble[i] = normalize(vect_bubble[i]);
+
+            if(is_inside[i])
+            {
+                double contact_x = pos_bubble[i].x + 20*vect_bubble[i].x;
+                double contact_y = pos_bubble[i].y + 20*vect_bubble[i].y;
+                //double check1 = (contact_x-250)*(contact_x-250) + (contact_y-250)*(contact_y-250);
+                double check2 = (pos_bubble[i].x-250)*(pos_bubble[i].x-250) + (pos_bubble[i].y-250)*(pos_bubble[i].y-250);
+
+                //check1 >= 149*149  ||
+                if(  check2 >= 129*130)
+                {
+                    struct point normal = {250 - contact_x, 250 - contact_y, 0};
+                    normal = normalize(normal);
+                    double dot_value = normal.x*vect_bubble[i].x + normal.y*vect_bubble[i].y;
+                    dot_value *= 2;
+                    normal.x *= dot_value;
+                    normal.y *= dot_value;
+                    vect_bubble[i].x -= normal.x;
+                    vect_bubble[i].y -= normal.y;
+                }
+
+
+
+            }
+        }
+
+
+
+
+        for(int p = 0; p<N; p++)
+            {
+                for(int q = p+1; q<N; q++)
+                {
+                    if(is_inside[p]!=1 || is_inside[q]!=1)
+                        continue;
+
+                    double xx = pos_bubble[p].x-pos_bubble[q].x;
+                    double yy = pos_bubble[p].y-pos_bubble[q].y;
+
+                    if( xx*xx + yy*yy < 40.1*40)
+                    {
+                        struct point temp = { -xx,-yy, 0};
+                        struct point temp3 = { xx,yy, 0};
+
+                        struct point temp1 = get_reflection(vect_bubble[p], temp);
+                        struct point temp2 = get_reflection(vect_bubble[q], temp3);
+
+                        vect_bubble[p].x = temp1.x;
+                        vect_bubble[p].y = temp1.y;
+
+                        //if(vect_bubble[p].x*vect_bubble[q].x + vect_bubble[p].y*vect_bubble[q].y >0)
+
+                        vect_bubble[q].x = temp2.x;
+                        vect_bubble[q].y = temp2.y;
+                    }
+                }
+
+            }
+
+    }
+
+
+
+
+
+
+
+
+
     glRotatef(-90, 0,0,1);
     glColor3f(1,0,0);
 
@@ -162,7 +243,7 @@ void specialKeyListener(int key, int x,int y){
             b1_speed -= .1;
 			break;
 		case GLUT_KEY_UP:		// up arrow key
-            if(b1_speed<2)		//down arrow key
+            if(b1_speed<3)		//down arrow key
             b1_speed += .1;
 			break;
 
@@ -213,34 +294,7 @@ void animate(){
             pos_bubble[i].y = pos_bubble[i].y + b1_speed*vect_bubble[i].y;
 
 
-            if( (pos_bubble[i].x-250)*(pos_bubble[i].x-250) +( pos_bubble[i].y-250)*(pos_bubble[i].y-250) < 129*130 )
-                is_inside[i] = 1;
 
-            vect_bubble[i] = normalize(vect_bubble[i]);
-
-            if(is_inside[i])
-            {
-                double contact_x = pos_bubble[i].x + 20*vect_bubble[i].x;
-                double contact_y = pos_bubble[i].y + 20*vect_bubble[i].y;
-                //double check1 = (contact_x-250)*(contact_x-250) + (contact_y-250)*(contact_y-250);
-                double check2 = (pos_bubble[i].x-250)*(pos_bubble[i].x-250) + (pos_bubble[i].y-250)*(pos_bubble[i].y-250);
-
-                //check1 >= 149*149  ||
-                if(  check2 >= 129*130)
-                {
-                    struct point normal = {250 - contact_x, 250 - contact_y, 0};
-                    normal = normalize(normal);
-                    double dot_value = normal.x*vect_bubble[i].x + normal.y*vect_bubble[i].y;
-                    dot_value *= 2;
-                    normal.x *= dot_value;
-                    normal.y *= dot_value;
-                    vect_bubble[i].x -= normal.x;
-                    vect_bubble[i].y -= normal.y;
-                }
-
-
-
-            }
 
             if(N<5)
                 timez++;
@@ -254,35 +308,7 @@ void animate(){
 
 
 
-            for(int p = 0; p<N; p++)
-            {
-                for(int q = p+1; q<N; q++)
-                {
-                    if(is_inside[p]!=1 || is_inside[q]!=1)
-                        continue;
 
-                    double xx = pos_bubble[p].x-pos_bubble[q].x;
-                    double yy = pos_bubble[p].y-pos_bubble[q].y;
-
-                    if( xx*xx + yy*yy < 40.2*40)
-                    {
-                        struct point temp = { -xx,-yy, 0};
-                        struct point temp3 = { xx,yy, 0};
-
-                        struct point temp1 = get_reflection(vect_bubble[p], temp);
-                        struct point temp2 = get_reflection(vect_bubble[q], temp3);
-
-                        vect_bubble[p].x = temp1.x;
-                        vect_bubble[p].y = temp1.y;
-
-                        //if(vect_bubble[p].x*vect_bubble[q].x + vect_bubble[p].y*vect_bubble[q].y >0)
-
-                        vect_bubble[q].x = temp2.x;
-                        vect_bubble[q].y = temp2.y;
-                    }
-                }
-
-            }
 
 
 
