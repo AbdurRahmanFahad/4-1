@@ -694,6 +694,12 @@ void keyboardListener(unsigned char key, int x,int y){
                 l_gun = normalize(l_gun);
 
 
+                temp = {gun_point.x,gun_point.y,gun_point.z};
+
+                gun_point.x = temp.x*cos(1.0*pi/180.0) - temp.y*sin(1.0*pi/180.0);
+                gun_point.y = temp.y*cos(1.0*pi/180.0) + temp.x*sin(1.0*pi/180.0);
+
+
                 /*l_gun.x = l_gun.x*cos(2.0*pi - 1.0*pi/180.0) + r_gun.x*sin(2.0*pi - 1.0*pi/180.0);
                 l_gun.y = l_gun.y*cos(2.0*pi - 1.0*pi/180.0) + r_gun.y*sin(2.0*pi - 1.0*pi/180.0);
                 l_gun.z = l_gun.z*cos(2.0*pi - 1.0*pi/180.0) + r_gun.z*sin(2.0*pi - 1.0*pi/180.0);
@@ -703,16 +709,11 @@ void keyboardListener(unsigned char key, int x,int y){
 
 
 
+                //actual_gun.x = l_gun.x + relative_gun.x;
+                //actual_gun.y = l_gun.y + relative_gun.y;
+                //actual_gun.z = l_gun.z + relative_gun.z;
 
-                gun_point.x = l_gun.x*30;
-                gun_point.y = l_gun.y*30;
-                gun_point.z = l_gun.z*30;
-
-                actual_gun.x = l_gun.x + relative_gun.x;
-                actual_gun.y = l_gun.y + relative_gun.y;
-                actual_gun.z = l_gun.z + relative_gun.z;
-
-                actual_gun = normalize(actual_gun);
+                //actual_gun = normalize(actual_gun);
             }
             break;
         case 'w':
@@ -727,6 +728,12 @@ void keyboardListener(unsigned char key, int x,int y){
                 l_gun = normalize(l_gun);
 
 
+                temp = {gun_point.x,gun_point.y,gun_point.z};
+
+                gun_point.x = temp.x*cos(2.0*pi - 1.0*pi/180.0) - temp.y*sin(2.0*pi - 1.0*pi/180.0);
+                gun_point.y = temp.y*cos(2.0*pi - 1.0*pi/180.0) + temp.x*sin(2.0*pi - 1.0*pi/180.0);
+
+
                 /*l_gun.x = l_gun.x*cos(1.0*pi/180.0) + r_gun.x*sin(1.0*pi/180.0);
                 l_gun.y = l_gun.y*cos(1.0*pi/180.0) + r_gun.y*sin(1.0*pi/180.0);
                 l_gun.z = l_gun.z*cos(1.0*pi/180.0) + r_gun.z*sin(1.0*pi/180.0);
@@ -735,18 +742,11 @@ void keyboardListener(unsigned char key, int x,int y){
                 r_gun = normalize(r_gun);*/
 
 
+                //actual_gun.x = l_gun.x + relative_gun.x;
+                //actual_gun.y = l_gun.y + relative_gun.y;
+                //actual_gun.z = l_gun.z + relative_gun.z;
 
-
-
-                gun_point.x = l_gun.x*30;
-                gun_point.y = l_gun.y*30;
-                gun_point.z = l_gun.z*30;
-
-                actual_gun.x = l_gun.x + relative_gun.x;
-                actual_gun.y = l_gun.y + relative_gun.y;
-                actual_gun.z = l_gun.z + relative_gun.z;
-
-                actual_gun = normalize(actual_gun);
+                //actual_gun = normalize(actual_gun);
             }
             break;
         case 'e':
@@ -760,6 +760,12 @@ void keyboardListener(unsigned char key, int x,int y){
                 l_gun = normalize(l_gun);
 
 
+                temp = {gun_point.x,gun_point.y,gun_point.z};
+
+                gun_point.y = temp.y*cos(1.0*pi/180.0) - temp.z*sin(1.0*pi/180.0);
+                gun_point.z = temp.z*cos(1.0*pi/180.0) + temp.y*sin(1.0*pi/180.0);
+
+
                 /*l_gun.x = l_gun.x*cos(1.0*pi/180.0) + u_gun.x*sin(1.0*pi/180.0);
                 l_gun.y = l_gun.y*cos(1.0*pi/180.0) + u_gun.y*sin(1.0*pi/180.0);
                 l_gun.z = l_gun.z*cos(1.0*pi/180.0) + u_gun.z*sin(1.0*pi/180.0);
@@ -769,15 +775,13 @@ void keyboardListener(unsigned char key, int x,int y){
 
 
 
-                gun_point.x = l_gun.x*30;
-                gun_point.y = l_gun.y*30;
-                gun_point.z = l_gun.z*30;
 
-                actual_gun.x = l_gun.x + relative_gun.x;
-                actual_gun.y = l_gun.y + relative_gun.y;
-                actual_gun.z = l_gun.z + relative_gun.z;
 
-                actual_gun = normalize(actual_gun);
+                //actual_gun.x = l_gun.x + relative_gun.x;
+                //actual_gun.y = l_gun.y + relative_gun.y;
+                //actual_gun.z = l_gun.z + relative_gun.z;
+
+                //actual_gun = normalize(actual_gun);
 
             }
 
@@ -794,6 +798,13 @@ void keyboardListener(unsigned char key, int x,int y){
                 l_gun = normalize(l_gun);
 
 
+                temp = {gun_point.x,gun_point.y,gun_point.z};
+
+                gun_point.y = temp.y*cos(2.0*pi - 1.0*pi/180.0) - temp.z*sin(2.0*pi - 1.0*pi/180.0);
+                gun_point.z = temp.z*cos(2.0*pi - 1.0*pi/180.0) + temp.y*sin(2.0*pi - 1.0*pi/180.0);
+
+
+
 
                 /*l_gun.x = l_gun.x*cos(2.0*pi - 1.0*pi/180.0) + u_gun.x*sin(2.0*pi - 1.0*pi/180.0);
                 l_gun.y = l_gun.y*cos(2.0*pi - 1.0*pi/180.0) + u_gun.y*sin(2.0*pi - 1.0*pi/180.0);
@@ -803,15 +814,11 @@ void keyboardListener(unsigned char key, int x,int y){
                 u_gun = normalize(u_gun);*/
 
 
-                gun_point.x = l_gun.x*30;
-                gun_point.y = l_gun.y*30;
-                gun_point.z = l_gun.z*30;
+                //actual_gun.x = l_gun.x + relative_gun.x;
+                //actual_gun.y = l_gun.y + relative_gun.y;
+                //actual_gun.z = l_gun.z + relative_gun.z;
 
-                actual_gun.x = l_gun.x + relative_gun.x;
-                actual_gun.y = l_gun.y + relative_gun.y;
-                actual_gun.z = l_gun.z + relative_gun.z;
-
-                actual_gun = normalize(actual_gun);
+                //actual_gun = normalize(actual_gun);
             }
 
             break;
