@@ -155,7 +155,7 @@ void drawSS()
                     double xx = pos_bubble[p].x-pos_bubble[q].x;
                     double yy = pos_bubble[p].y-pos_bubble[q].y;
 
-                    if( xx*xx + yy*yy < 40.1*40)
+                    if( xx*xx + yy*yy < 40.1*40 )
                     {
                         struct point temp = { -xx,-yy, 0};
                         struct point temp3 = { xx,yy, 0};
@@ -239,11 +239,11 @@ void specialKeyListener(int key, int x,int y){
 	switch(key){
 
 		case GLUT_KEY_DOWN:
-		    if(b1_speed>.5)		//down arrow key
+		    if(b1_speed>.1)		//down arrow key
             b1_speed -= .1;
 			break;
 		case GLUT_KEY_UP:		// up arrow key
-            if(b1_speed<3)		//down arrow key
+            if(b1_speed<2)		//down arrow key
             b1_speed += .1;
 			break;
 
