@@ -38,11 +38,6 @@ struct point u_gun = {0,0,1};
 struct point r_gun = {1,0,0};
 
 struct point gun_point = {0,30,0};
-struct point relative_gun = {0,1,0};
-struct point actual_gun = {0,1,0};
-
-
-struct point ttransVect = {0,0,0};
 
 void print_my(struct point u_gun)
 {
@@ -530,25 +525,13 @@ void drawCylinder(double radius,double height,int segments)
 
 void drawSS()
 {
+
     /*glBegin(GL_LINES);{
         glColor3f(0,1,0);
         glVertex3f(gun_point.x,gun_point.y,gun_point.z);
-        glVertex3f( 200.0*relative_gun.x+gun_point.x,200.0*relative_gun.y+gun_point.y,200.0*relative_gun.z+gun_point.z);
-    }glEnd();*/
-
-    glBegin(GL_LINES);{
-        glColor3f(0,1,0);
-        glVertex3f(gun_point.x,gun_point.y,gun_point.z);
         glVertex3f( gun_point.x+200.0*l_gun.x, gun_point.y+200.0*l_gun.y, gun_point.z+200.0*l_gun.z);
-    }glEnd();
-
-
-
-    /*glColor3f(1,0,0);
-    glBegin(GL_LINES);{
-        glVertex3f(0,0,0);
-        glVertex3f( 500.0*l_gun.x,500.0*l_gun.y,500.0*l_gun.z);
     }glEnd();*/
+
 
     glColor3f(1,0,0);
     drawPlane();
@@ -572,35 +555,47 @@ void drawSS()
 
 
 
-
-    /*glBegin(GL_LINES);{
-        glVertex3f(gun_point.x,gun_point.y,gun_point.z);
-        glVertex3f( 200*actual_gun.x,200*actual_gun.y,200*actual_gun.z);
-    }glEnd();*/
-
-
     glColor3f(1,0,0);
 
 
 
-    glRotatef(theta_xy,0,0,1);
     //glRotatef(theta_xy,u_gun.x,u_gun.y,u_gun.z);
 
-    glRotatef(theta_yz,1,0,0);
     //glRotatef(theta_yz,r_gun.x,r_gun.y,r_gun.z);
 
+
+
+
+    glPushMatrix();
+
+    glRotatef(theta_xy,0,0,1);
+    glTranslatef(0,30,0);
+    boro_half_circle2();
+
+
+    glPopMatrix();
+
+
+    glRotatef(theta_xy,0,0,1);
+    glRotatef(theta_yz,1,0,0);
     glTranslatef(0,30,0);
 
-    boro_half_circle2();
     boro_half_circle1();
+
+
 
     glRotatef(theta_gun,1,0,0);
     glRotatef(theta_xz,0,1,0);
+
     draw_half_circle();
     glTranslatef(0,11,0);
 
     drawCylinder(11,80,89);
     drawhorn();
+
+
+
+
 
 }
 
@@ -706,14 +701,6 @@ void keyboardListener(unsigned char key, int x,int y){
                 l_gun = normalize(l_gun);
                 r_gun = cross_product(l_gun, u_gun);
                 r_gun = normalize(r_gun);*/
-
-
-
-                //actual_gun.x = l_gun.x + relative_gun.x;
-                //actual_gun.y = l_gun.y + relative_gun.y;
-                //actual_gun.z = l_gun.z + relative_gun.z;
-
-                //actual_gun = normalize(actual_gun);
             }
             break;
         case 'w':
@@ -741,12 +728,6 @@ void keyboardListener(unsigned char key, int x,int y){
                 r_gun = cross_product(l_gun, u_gun);
                 r_gun = normalize(r_gun);*/
 
-
-                //actual_gun.x = l_gun.x + relative_gun.x;
-                //actual_gun.y = l_gun.y + relative_gun.y;
-                //actual_gun.z = l_gun.z + relative_gun.z;
-
-                //actual_gun = normalize(actual_gun);
             }
             break;
         case 'e':
@@ -773,15 +754,6 @@ void keyboardListener(unsigned char key, int x,int y){
                 u_gun = cross_product(r_gun, l_gun);
                 u_gun = normalize(u_gun);*/
 
-
-
-
-
-                //actual_gun.x = l_gun.x + relative_gun.x;
-                //actual_gun.y = l_gun.y + relative_gun.y;
-                //actual_gun.z = l_gun.z + relative_gun.z;
-
-                //actual_gun = normalize(actual_gun);
 
             }
 
@@ -813,16 +785,9 @@ void keyboardListener(unsigned char key, int x,int y){
                 u_gun = cross_product(r_gun, l_gun);
                 u_gun = normalize(u_gun);*/
 
-
-                //actual_gun.x = l_gun.x + relative_gun.x;
-                //actual_gun.y = l_gun.y + relative_gun.y;
-                //actual_gun.z = l_gun.z + relative_gun.z;
-
-                //actual_gun = normalize(actual_gun);
             }
 
             break;
-
 
 
         case 'd':
@@ -855,20 +820,6 @@ void keyboardListener(unsigned char key, int x,int y){
                 l_gun.z = temp.z*cos(1.0*pi/180.0) + temp.y*sin(1.0*pi/180.0);
                 l_gun = normalize(l_gun);
 
-
-                /*struct point temp = {relative_gun.x,relative_gun.y,relative_gun.z};
-                relative_gun.y = temp.y*cos(1.0*pi/180.0) - temp.z*sin(1.0*pi/180.0);
-                relative_gun.z = temp.z*cos(1.0*pi/180.0) + temp.y*sin(1.0*pi/180.0);
-                relative_gun = normalize(relative_gun);*/
-
-                //cout<<atan(relative_gun.z/relative_gun.y)*180.0/pi<<endl;
-
-                actual_gun.x = l_gun.x + relative_gun.x;
-                actual_gun.y = l_gun.y + relative_gun.y;
-                actual_gun.z = l_gun.z + relative_gun.z;
-
-                actual_gun = normalize(actual_gun);
-
             }
             break;
         case 's':
@@ -881,17 +832,6 @@ void keyboardListener(unsigned char key, int x,int y){
                 l_gun.z = temp.z*cos(2.0*pi - 1.0*pi/180.0) + temp.y*sin(2.0*pi - 1.0*pi/180.0);
                 l_gun = normalize(l_gun);
 
-
-                /*struct point temp = {relative_gun.x,relative_gun.y,relative_gun.z};
-                relative_gun.y = temp.y*cos(2.0*pi - 1.0*pi/180.0) - temp.z*sin(2.0*pi - 1.0*pi/180.0);
-                relative_gun.z = temp.z*cos(2.0*pi - 1.0*pi/180.0) + temp.y*sin(2.0*pi - 1.0*pi/180.0);
-                relative_gun = normalize(relative_gun);*/
-
-                actual_gun.x = l_gun.x + relative_gun.x;
-                actual_gun.y = l_gun.y + relative_gun.y;
-                actual_gun.z = l_gun.z + relative_gun.z;
-
-                actual_gun = normalize(actual_gun);
             }
             break;
 
@@ -901,8 +841,7 @@ void keyboardListener(unsigned char key, int x,int y){
 
 	}
 
-	//print_my(gun_point);
-	print_my(l_gun);
+	//print_my(l_gun);
 
 
 }
