@@ -11,6 +11,8 @@ There are three tasks in this assignment.
 
 ## Offline 2
 
+### Assignment on **Raster Based Graphics Pipeline**
+
 In this assignment, we will develop the raster based graphics pipeline used in OpenGL. The pipeline can be thought of as a series of six stages. You will implement roughly 4 stages of the pipeline.
 
 
