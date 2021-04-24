@@ -7,3 +7,4 @@ ALL THE OFFLINES OF 4-1
 
 ## CSE 410 (Computer Graphics)
 ### Offline 1
+### Offline 2
