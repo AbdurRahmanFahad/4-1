@@ -87,7 +87,24 @@ public:
         return res;
     }
 
-    
+    matrix projection_matrix(double near, double far, double r, double t)
+    {
+        matrix res;
+        res.mat[0][0] = near / r;
+        res.mat[1][1] = near / t;
+        res.mat[2][2] = -(far + near) / (far - near);
+        res.mat[2][3] = -(2 * far * near) / (far - near);
+        res.mat[3][2] = -1;
+        return res;
+    }
+
+    matrix rotation_matrix()
+    {
+        matrix res;
+        res.mat[3][3] = 1;
+        return res;
+    }
+
     friend ostream &
     operator<<(ostream &os, matrix &m)
     {
