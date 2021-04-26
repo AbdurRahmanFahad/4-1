@@ -34,7 +34,7 @@ public:
     point operator*(double d)
     {
         point res;
-        res.x *= d, res.y *= d, res.z *= d;
+        res.x = x * d, res.y = y * d, res.z = z * d;
         return res;
     }
 
@@ -277,7 +277,7 @@ int main()
                 view = transform(view_transformation, model);
                 projection = transform(projection_mat, view);
 
-                debug << view_transformation << endl;
+                //debug << view_transformation << endl;
                 stage1 << model;
                 stage2 << view;
                 stage3 << projection;
@@ -318,6 +318,7 @@ int main()
         else if (command == "pop")
         {
             ///TODO: pop
+            S = State.top();
             State.pop();
         }
     }
