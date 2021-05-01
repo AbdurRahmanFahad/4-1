@@ -17,7 +17,19 @@ public:
 
 int main()
 {
+    FILE *newfile;
+    int Screen_Width, Screen_Height;
+    double left_limit_x, bottom_limit_y, front_z, rear_z;
 
-    int Screen_Width, Screen_Height, limits;
-    return 0;
+    newfile = fopen("config.txt", "r");
+
+    if (newfile)
+    {
+        fscanf(newfile, "%d %d %lf", &Screen_Width, &Screen_Height, &left_limit_x);
+        fscanf(newfile, "%lf %lf %lf", &bottom_limit_y, &front_z, &rear_z);
+
+        fclose(newfile);
+    }
+
+        return 0;
 }
