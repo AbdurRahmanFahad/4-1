@@ -5,6 +5,7 @@ using namespace std;
 class point;
 class triangle;
 
+int number_of_triangles;
 int Screen_Width, Screen_Height;
 double left_limit_x, bottom_limit_y, front_z, rear_z;
 double right_limit_x, top_limit_y;
@@ -44,12 +45,15 @@ public:
         x_min = minn(points[0].x, points[1].x, points[2].x);
         y_max = maxx(points[0].y, points[1].y, points[2].y);
         y_min = minn(points[0].y, points[1].y, points[2].y);
+
+        upper_scanline = y_max < top_limit_y ? y_max : top_limit_y;
+        lower_scanline = y_min > bottom_limit_y ? y_min : bottom_limit_y;
     }
 };
 
 triangle triangles[100];
 
-int read_data()
+void read_data()
 {
     FILE *newfile;
 
@@ -65,7 +69,7 @@ int read_data()
 
     newfile = fopen("stage3.txt", "r");
 
-    int number_of_triangles = 0;
+    number_of_triangles = 0;
 
     if (newfile)
     {
@@ -84,8 +88,6 @@ int read_data()
 
         fclose(newfile);
     }
-
-    return number_of_triangles;
 }
 
 void init_variables()
@@ -95,6 +97,14 @@ void init_variables()
 
     dx = (right_limit_x * 2) / Screen_Width;
     dy = (top_limit_y * 2) / Screen_Height;
+
+    Top_Y = top_limit_y - dy / 2.0;
+    Left_X = left_limit_x + dx / 2.0;
+
+    for (int i = 0; i < number_of_triangles; i++)
+    {
+        triangles[i].init();
+    }
 }
 
 double maxx(double a, double b, double c)
@@ -110,7 +120,7 @@ double minn(double a, double b, double c)
 int main()
 {
 
-    int number_of_triangles = read_data();
+    read_data();
 
     for (int i = 0; i < number_of_triangles; i++)
     {
