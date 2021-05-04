@@ -212,6 +212,32 @@ double dot(point p1, point p2)
     return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
 }
 
+vector<double> intersecting_points(triangle tr, double py)
+{
+    vector<double> left_right_x, px;
+    int j = 0;
+    for (int i = 0; i <= 2; i++)
+    {
+        point p0 = tr.points[i];
+        point p1 = tr.points[(i + 1) % 3];
+
+        if (p0.y == p1.y)
+            continue;
+
+        double t = (py - p0.y) / (p1.y - p0.y);
+        if (t < 0 || t > 1)
+            continue;
+        if (j < 2)
+        {
+            px.push_back(p0.x + t * (p1.x - p0.x));
+            j++;
+        }
+    }
+    sort(px.begin(), px.end());
+
+    return px;
+}
+
 void solve()
 {
 
@@ -222,6 +248,21 @@ void solve()
             double y_val = Top_Y - j * dy;
 
             double left, right;
+
+            // need to review******************************
+
+            vector<double> temp = intersecting_points(triangles[i], y_val);
+            if (temp.size() < 2)
+                continue;
+            left = temp[0];
+            right = temp[1];
+
+            // need to review******************************
+
+            if (left < left_limit_x)
+                left = left_limit_x;
+            if (right > right_limit_x)
+                right = right_limit_x;
 
             int column_start, column_end;
             column_start = round((left - Left_X) / dx);
@@ -300,10 +341,23 @@ int main()
 
     read_data();
 
-    for (int i = 0; i < number_of_triangles; i++)
-    {
-        triangles[i].print();
-    }
+    init_variables();
+
+    init_z_buffer();
+
+    init_frame_buffer();
+
+    solve();
+
+    save_image();
+
+    free_memory();
+
+
+    // for (int i = 0; i < number_of_triangles; i++)
+    // {
+    //     triangles[i].print();
+    // }
 
     return 0;
 }
