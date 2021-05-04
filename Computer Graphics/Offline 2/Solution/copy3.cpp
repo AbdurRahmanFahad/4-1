@@ -49,15 +49,6 @@ void apply_procedure()
 {
     for (int i = 0; i < triangles.size(); i++)
     {
-        double top_scanline = top_Scanline(triangles[i]);
-        double bottom_scanline = bottom_Scanline(triangles[i]);
-        double left_x, right_x;
-        vector<double> plane = plane_equation(triangles[i]);
-
-        //cout << "Triangle:"<<i<<"------------------\n";
-
-        int r = y_to_row(bottom_scanline);
-        int end_r = y_to_row(top_scanline);
 
         for (; r >= end_r; r--)
         {
@@ -82,14 +73,10 @@ void apply_procedure()
 
                 double temp_z = get_z_value(k, j, plane);
 
-                //int r = y_to_row(j);
-                //int c = x_to_column(k);
                 if (r < 0 || r >= screen_height || c < 0 || c >= screen_width)
                 {
                     continue;
                 }
-
-                //printf("%d %d\n", r, c);
 
                 if (temp_z < z_buffer[r][c] && temp_z >= z_front_limit)
                 {
@@ -99,25 +86,4 @@ void apply_procedure()
             }
         }
     }
-}
-
-void free_memory()
-{
-    triangles.clear();
-    for (int i = 0; i < screen_height; i++)
-    {
-        delete z_buffer[i];
-        delete frame_buffer[i];
-    }
-    delete z_buffer;
-    delete frame_buffer;
-}
-
-int main()
-{
-    read_data();
-    initialize_z_buffer_and_frame_buffer();
-    apply_procedure();
-    save();
-    free_memory();
 }
