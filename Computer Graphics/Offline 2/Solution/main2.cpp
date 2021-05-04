@@ -78,6 +78,7 @@ public:
         r = rand() % 256;
         g = rand() % 256;
         b = rand() % 256;
+        //cout << r << " " << g << " " << b << endl;
 
         x_max = maxx(points[0].x, points[1].x, points[2].x);
         x_min = minn(points[0].x, points[1].x, points[2].x);
@@ -307,7 +308,9 @@ void save_image()
         for (int j = 0; j < Screen_Height; j++)
         {
             output.set_pixel(i, j, frame_buffer[i][j].x, frame_buffer[i][j].y, frame_buffer[i][j].z);
+            //cout << frame_buffer[i][j].x << frame_buffer[i][j].y << frame_buffer[i][j].z << " ";
         }
+        //cout << endl;
     }
 
     output.save_image("output.bmp");
