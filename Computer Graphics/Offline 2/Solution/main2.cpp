@@ -78,7 +78,6 @@ public:
         r = rand() % 256;
         g = rand() % 256;
         b = rand() % 256;
-        //cout << r << " " << g << " " << b << endl;
 
         x_max = maxx(points[0].x, points[1].x, points[2].x);
         x_min = minn(points[0].x, points[1].x, points[2].x);
@@ -88,8 +87,8 @@ public:
         upper_scanline = y_max < top_limit_y ? y_max : top_limit_y;
         lower_scanline = y_min > bottom_limit_y ? y_min : bottom_limit_y;
 
-        row_start = round((Top_Y - upper_scanline) / dy);
-        row_end = round((Top_Y - lower_scanline) / dy);
+        row_start = round((Top_Y - lower_scanline) / dy);
+        row_end = round((Top_Y - upper_scanline) / dy);
     }
 
     void calculate_plane()
@@ -279,15 +278,16 @@ void solve()
             int column_start, column_end;
             column_start = round((left - Left_X) / dx);
             column_end = round((right - Left_X) / dx);
-
+            //cout << column_start << " " << column_end << endl;
             for (int k = column_start; k <= column_end; k++)
             {
+
                 double x_val = Left_X + k * dx;
                 double z_val = triangles[i].get_z(x_val, y_val);
                 if (j < 0 || j >= Screen_Height || k < 0 || k >= Screen_Width)
                     continue;
 
-                if (z_val < z_buffer[j][k] && z_val >= rear_z)
+                if (z_val < z_buffer[j][k] && z_val >= front_z)
                 {
                     z_buffer[j][k] = z_val;
                     frame_buffer[j][k].x = triangles[i].r;
@@ -307,10 +307,8 @@ void save_image()
     {
         for (int j = 0; j < Screen_Height; j++)
         {
-            output.set_pixel(i, j, frame_buffer[i][j].x, frame_buffer[i][j].y, frame_buffer[i][j].z);
-            //cout << frame_buffer[i][j].x << frame_buffer[i][j].y << frame_buffer[i][j].z << " ";
+            output.set_pixel(j, i, frame_buffer[i][j].x, frame_buffer[i][j].y, frame_buffer[i][j].z);
         }
-        //cout << endl;
     }
 
     output.save_image("output.bmp");
