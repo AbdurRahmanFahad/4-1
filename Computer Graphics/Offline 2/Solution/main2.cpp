@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "bitmap_image.hpp"
 
 using namespace std;
 
@@ -10,6 +11,9 @@ int Screen_Width, Screen_Height;
 double left_limit_x, bottom_limit_y, front_z, rear_z;
 double right_limit_x, top_limit_y;
 double dx, dy, Top_Y, Left_X;
+
+double **z_buffer;
+point **frame_buffer;
 
 class point
 {
@@ -148,6 +152,38 @@ void init_variables()
     }
 }
 
+void init_z_buffer()
+{
+    z_buffer = new double *[Screen_Height];
+
+    for (int i = 0; i < Screen_Height; i++)
+    {
+        z_buffer[i] = new double[Screen_Width];
+
+        for (int j = 0; j < Screen_Width; j++)
+        {
+            z_buffer[i][j] = rear_z;
+        }
+    }
+}
+
+void init_frame_buffer()
+{
+    frame_buffer = new point *[Screen_Height]; //point for storing RGB values
+
+    for (int i = 0; i < Screen_Height; i++)
+    {
+        frame_buffer[i] = new point[Screen_Width];
+
+        for (int j = 0; j < Screen_Width; j++)
+        {
+            frame_buffer[i][j].x = 0.0; // r
+            frame_buffer[i][j].y = 0.0; // g
+            frame_buffer[i][j].z = 0.0; // b
+        }
+    }
+}
+
 double maxx(double a, double b, double c)
 {
     return max(max(a, b), c);
@@ -170,6 +206,21 @@ point cross(point a, point b)
 double dot(point p1, point p2)
 {
     return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
+}
+
+void create_image()
+{
+    bitmap_image output(Screen_Width, Screen_Height);
+
+    for (int i = 0; i < Screen_Width; i++)
+    {
+        for (int j = 0; j < Screen_Height; j++)
+        {
+            output.set_pixel(i, j, frame_buffer[i][j].x, frame_buffer[i][j].y, frame_buffer[i][j].z);
+        }
+    }
+
+    output.save_image("out.bmp");
 }
 
 int main()

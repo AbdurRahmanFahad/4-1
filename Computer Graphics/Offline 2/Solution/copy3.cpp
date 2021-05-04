@@ -1,10 +1,3 @@
-#include <bits/stdc++.h>
-#include "bitmap_image.hpp"
-using namespace std;
-
-vector<Triangle> triangles;
-double **z_buffer;
-Color **frame_buffer;
 
 vector<double> left_and_right_intersecting_points(Triangle tr, double py)
 {
