@@ -223,24 +223,24 @@ double dot(point p1, point p2)
     return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
 }
 
-vector<double> intersecting_points(triangle tr, double py)
+vector<double> intersecting_points(triangle t, double y_val)
 {
     vector<double> left_right_x, px;
     int j = 0;
-    for (int i = 0; i <= 2; i++)
+    for (int i = 0; i < 3; i++)
     {
-        point p0 = tr.points[i];
-        point p1 = tr.points[(i + 1) % 3];
+        point p0 = t.points[i];
+        point p1 = t.points[(i + 1) % 3];
 
         if (p0.y == p1.y)
             continue;
 
-        double t = (py - p0.y) / (p1.y - p0.y);
-        if (t < 0 || t > 1)
+        double m = (y_val - p0.y) / (p1.y - p0.y);
+        if (m < 0 || m > 1)
             continue;
         if (j < 2)
         {
-            px.push_back(p0.x + t * (p1.x - p0.x));
+            px.push_back(p0.x + m * (p1.x - p0.x));
             j++;
         }
     }

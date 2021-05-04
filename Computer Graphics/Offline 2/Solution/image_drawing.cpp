@@ -11,16 +11,17 @@ using namespace std;
 int main()
 {
 
-    bitmap_image image(500, 300);
+    bitmap_image image(500, 500);
 
+    int p = 0;
     for (int i = 0; i < 500; i++)
     {
-        for (int j = 0; j < 300; j++)
+        for (int j = 0; j < 500; j++)
         {
-            if ((250 - i) * (250 - i) + (150 - j) * (150 - j) <= 90 * 90)
-                image.set_pixel(i, j, 255, 0, 0);
-            else
-                image.set_pixel(i, j, 20, 90, 50);
+            double q = (250 - i) * (250 - i) + (250 - j) * (250 - j);
+            q = q / (350.0 * 350.0);
+            q = (255 - q) * 250.0;
+            image.set_pixel(i, j, (int)q, 0, 0);
         }
     }
 
