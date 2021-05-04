@@ -2,6 +2,12 @@
 
 using namespace std;
 
+class point;
+class triangle;
+
+int Screen_Width, Screen_Height;
+double left_limit_x, bottom_limit_y, front_z, rear_z;
+
 class point
 {
 public:
@@ -24,12 +30,11 @@ public:
     }
 };
 
-int main()
+triangle triangles[100];
+
+int read_data()
 {
     FILE *newfile;
-    int Screen_Width, Screen_Height;
-    double left_limit_x, bottom_limit_y, front_z, rear_z;
-    triangle triangles[100];
 
     newfile = fopen("config.txt", "r");
 
@@ -57,12 +62,23 @@ int main()
                 triangles[number_of_triangles].points[i].y = y;
                 triangles[number_of_triangles].points[i].z = z;
             }
-
-            triangles[number_of_triangles].print();
             number_of_triangles++;
         }
 
         fclose(newfile);
+    }
+
+    return number_of_triangles;
+}
+
+int main()
+{
+
+    int number_of_triangles = read_data();
+
+    for (int i = 0; i < number_of_triangles; i++)
+    {
+        triangles[i].print();
     }
 
     return 0;
