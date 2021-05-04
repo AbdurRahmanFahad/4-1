@@ -21,6 +21,8 @@ point **frame_buffer;
 
 point cross(point a, point b);
 double dot(point p1, point p2);
+double maxx(double a, double b, double c);
+double minn(double a, double b, double c);
 
 // Class Definitions
 
