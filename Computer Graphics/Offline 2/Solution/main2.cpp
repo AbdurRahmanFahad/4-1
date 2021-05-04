@@ -3,9 +3,11 @@
 
 using namespace std;
 
+// Class Declaration
 class point;
 class triangle;
 
+// Global Variables
 int number_of_triangles;
 int Screen_Width, Screen_Height;
 double left_limit_x, bottom_limit_y, front_z, rear_z;
@@ -14,6 +16,13 @@ double dx, dy, Top_Y, Left_X;
 
 double **z_buffer;
 point **frame_buffer;
+
+// Function Declarations
+
+point cross(point a, point b);
+double dot(point p1, point p2);
+
+// Class Definitions
 
 class point
 {
@@ -352,7 +361,6 @@ int main()
     save_image();
 
     free_memory();
-
 
     // for (int i = 0; i < number_of_triangles; i++)
     // {
