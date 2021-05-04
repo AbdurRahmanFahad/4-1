@@ -48,8 +48,7 @@ public:
     double x_max, x_min, y_max, y_min;
     double upper_scanline, lower_scanline;
 
-    void
-    print()
+    void print()
     {
         for (int i = 0; i < 3; i++)
         {
@@ -84,6 +83,11 @@ public:
         plane.b = norm.y;
         plane.c = norm.z;
         plane.d = -(dot(norm, points[0]));
+    }
+
+    double get_z(double x, double y)
+    {
+        return (plane.a * x + plane.b * y + plane.d) / (-plane.c);
     }
 };
 
