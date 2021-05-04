@@ -223,6 +223,25 @@ void create_image()
     output.save_image("out.bmp");
 }
 
+void save_z_buffer()
+{
+    FILE *newfile;
+
+    newfile = fopen("z_buffer.txt", "w+");
+
+    for (int i = 0; i < Screen_Width; i++)
+    {
+        for (int j = 0; j < Screen_Height; j++)
+        {
+            fprintf(newfile, "%lf ", z_buffer[i][j]);
+        }
+
+        fprintf(newfile, "\n");
+    }
+
+    fclose(newfile);
+}
+
 int main()
 {
 
