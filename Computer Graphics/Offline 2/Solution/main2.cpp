@@ -208,7 +208,7 @@ double dot(point p1, point p2)
     return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
 }
 
-void create_image()
+void save_image()
 {
     bitmap_image output(Screen_Width, Screen_Height);
 
@@ -220,7 +220,7 @@ void create_image()
         }
     }
 
-    output.save_image("out.bmp");
+    output.save_image("output.bmp");
 }
 
 void save_z_buffer()
@@ -233,13 +233,28 @@ void save_z_buffer()
     {
         for (int j = 0; j < Screen_Height; j++)
         {
-            fprintf(newfile, "%lf ", z_buffer[i][j]);
+            if (z_buffer[i][j] < rear_z)
+                fprintf(newfile, "%lf ", z_buffer[i][j]);
         }
 
         fprintf(newfile, "\n");
     }
 
     fclose(newfile);
+}
+
+void free_memory()
+{
+    delete triangles;
+
+    for (int i = 0; i < Screen_Height; i++)
+    {
+        delete z_buffer[i];
+        delete frame_buffer[i];
+    }
+
+    delete z_buffer;
+    delete frame_buffer;
 }
 
 int main()

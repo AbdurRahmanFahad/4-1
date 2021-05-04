@@ -101,27 +101,6 @@ void apply_procedure()
     }
 }
 
-void save()
-{
-    bitmap_image image(screen_width, screen_height);
-    freopen("z_buffer.txt", "w", stdout);
-
-    for (int i = 0; i < screen_width; i++)
-    {
-        for (int j = 0; j < screen_height; j++)
-        {
-            if (z_buffer[i][j] < z_rear_limit)
-            {
-                printf("%lf\t", z_buffer[i][j]);
-            }
-            image.set_pixel(j, i, frame_buffer[i][j].r, frame_buffer[i][j].g, frame_buffer[i][j].b);
-        }
-        printf("\n");
-    }
-
-    image.save_image("test2.bmp");
-}
-
 void free_memory()
 {
     triangles.clear();
