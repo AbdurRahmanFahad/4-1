@@ -51,6 +51,7 @@ public:
     int r, g, b;
     double x_max, x_min, y_max, y_min;
     double upper_scanline, lower_scanline;
+    int row_start, row_end;
 
     void print()
     {
@@ -74,6 +75,9 @@ public:
 
         upper_scanline = y_max < top_limit_y ? y_max : top_limit_y;
         lower_scanline = y_min > bottom_limit_y ? y_min : bottom_limit_y;
+
+        row_start = round((Top_Y - upper_scanline) / dy);
+        row_end = round((Top_Y - lower_scanline) / dy);
     }
 
     void calculate_plane()
@@ -206,6 +210,40 @@ point cross(point a, point b)
 double dot(point p1, point p2)
 {
     return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
+}
+
+void solve()
+{
+
+    for (int i = 0; i < number_of_triangles; i++)
+    {
+        for (int j = triangles[i].row_start; j >= triangles[i].row_end; j--)
+        {
+            double y_val = Top_Y - j * dy;
+
+            double left, right;
+
+            int column_start, column_end;
+            column_start = round((left - Left_X) / dx);
+            column_end = round((right - Left_X) / dx);
+
+            for (int k = column_start; k <= column_end; k++)
+            {
+                double x_val = Left_X + k * dx;
+                double z_val = triangles[i].get_z(x_val, y_val);
+                if (j < 0 || j >= Screen_Height || k < 0 || k >= Screen_Width)
+                    continue;
+
+                if (z_val < z_buffer[j][k] && z_val >= rear_z)
+                {
+                    z_buffer[j][k] = z_val;
+                    frame_buffer[j][k].x = triangles[i].r;
+                    frame_buffer[j][k].y = triangles[i].g;
+                    frame_buffer[j][k].z = triangles[i].b;
+                }
+            }
+        }
+    }
 }
 
 void save_image()
