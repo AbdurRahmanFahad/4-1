@@ -63,27 +63,7 @@ void apply_procedure()
                 left_x = x_left_limit;
             if (right_x > x_right_limit)
                 right_x = x_right_limit;
-
-            int c = x_to_column(left_x);
-            int end_c = x_to_column(right_x);
-
-            for (; c <= end_c; c++)
-            {
-                double k = column_to_x(c);
-
-                double temp_z = get_z_value(k, j, plane);
-
-                if (r < 0 || r >= screen_height || c < 0 || c >= screen_width)
-                {
-                    continue;
-                }
-
-                if (temp_z < z_buffer[r][c] && temp_z >= z_front_limit)
-                {
-                    z_buffer[r][c] = temp_z;
-                    frame_buffer[r][c] = triangles[i].color;
-                }
-            }
         }
     }
+}
 }
