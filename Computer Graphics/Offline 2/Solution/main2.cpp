@@ -365,6 +365,8 @@ int main()
 
     save_image();
 
+    save_z_buffer();
+
     free_memory();
 
     // for (int i = 0; i < number_of_triangles; i++)
