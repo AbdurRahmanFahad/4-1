@@ -15,12 +15,35 @@ class point
 {
 public:
     double x, y, z;
+
+    point()
+    {
+        x = y = z = 0.0;
+    }
+
+    point(float a, float b, float c)
+    {
+        x = a, y = b, z = c;
+    }
+
+    point operator-(point &p)
+    {
+        point res = point(x - p.x, y - p.y, z - p.z);
+        return res;
+    }
+};
+
+class plane
+{
+public:
+    double a, b, c, d;
 };
 
 class triangle
 {
 public:
     point points[3];
+    plane plane;
     int r, g, b;
     double x_max, x_min, y_max, y_min;
     double upper_scanline, lower_scanline;
@@ -48,6 +71,19 @@ public:
 
         upper_scanline = y_max < top_limit_y ? y_max : top_limit_y;
         lower_scanline = y_min > bottom_limit_y ? y_min : bottom_limit_y;
+    }
+
+    void calculate_plane()
+    {
+        point AB, AC;
+        AB = points[1] - points[0];
+        AC = points[2] - points[0];
+
+        point norm = cross(AB, AC);
+        plane.a = norm.x;
+        plane.b = norm.y;
+        plane.c = norm.z;
+        plane.d = -(dot(norm, points[0]));
     }
 };
 
@@ -104,6 +140,7 @@ void init_variables()
     for (int i = 0; i < number_of_triangles; i++)
     {
         triangles[i].init();
+        triangles[i].calculate_plane();
     }
 }
 
@@ -115,6 +152,20 @@ double maxx(double a, double b, double c)
 double minn(double a, double b, double c)
 {
     return min(min(a, b), c);
+}
+
+point cross(point a, point b)
+{
+    point res;
+    res.x = a.y * b.z - a.z * b.y;
+    res.y = a.z * b.x - a.x * b.z;
+    res.z = a.x * b.y - a.y * b.x;
+    return res;
+}
+
+double dot(point p1, point p2)
+{
+    return p1.x * p2.x + p1.y * p2.y + p1.z * p2.z;
 }
 
 int main()
