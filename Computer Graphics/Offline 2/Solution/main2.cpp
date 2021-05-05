@@ -225,8 +225,10 @@ double dot(point p1, point p2)
 
 vector<double> intersecting_points(triangle t, double y_val)
 {
+    // y_val is the 'Y' Co-ordinate of Scanline
     vector<double> x_values;
     int count = 0;
+
     for (int i = 0; i < 3; i++) // checking every two point combination
     {
         point point1 = t.points[i];
@@ -242,6 +244,7 @@ vector<double> intersecting_points(triangle t, double y_val)
 
         if (m < 0 || m > 1) // means Outside the Line
             continue;
+
         if (count < 2) // Only Two Intersection Points
         {
             x_values.push_back(point1.x + m * (point2.x - point1.x)); // Interpolation
