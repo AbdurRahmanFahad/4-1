@@ -3,10 +3,10 @@
 
 using namespace std;
 
-/***************** Global Variables *****************/
-point eye, look, up;
-double fovX, fovY, aspectRatio, near, far, t, r;
-point l, rr, u;
+// Class Declaration
+class point;
+//class triangle;
+
 /***************** Point Related *****************/
 
 class point
@@ -49,6 +49,13 @@ public:
         return os;
     }
 };
+
+/***************** Global Variables *****************/
+point eye, look, up;
+double fovX, fovY, aspectRatio, near, far, t, r;
+point l, rr, u;
+
+/***************** Point Functions *****************/
 
 double dot(point p1, point p2)
 {
@@ -327,6 +334,6 @@ void solve_1()
 
 int main()
 {
-
-        return 0;
+    solve_1();
+    return 0;
 }
