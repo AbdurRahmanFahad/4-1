@@ -3,6 +3,10 @@
 
 using namespace std;
 
+/***************** Global Variables *****************/
+point eye, look, up;
+double fovX, fovY, aspectRatio, near, far, t, r;
+point l, rr, u;
 /***************** Point Related *****************/
 
 class point
@@ -208,17 +212,15 @@ int main()
 
     double x, y, z;
     cin >> x >> y >> z;
-    point eye = point(x, y, z);
+    eye = point(x, y, z);
     cin >> x >> y >> z;
-    point look = point(x, y, z);
+    look = point(x, y, z);
     cin >> x >> y >> z;
-    point up = point(x, y, z);
+    up = point(x, y, z);
 
-    double fovX, fovY, aspectRatio, near, far, t, r;
     cin >> fovY >> aspectRatio >> near >> far;
 
-    point l, rr, u;
-    l = look - eye;
+        l = look - eye;
     l = normalize(l);
     rr = cross(l, up);
     rr = normalize(rr);
