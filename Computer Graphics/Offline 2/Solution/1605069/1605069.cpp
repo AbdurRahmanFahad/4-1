@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include "bitmap_image.hpp"
 
 using namespace std;
 
