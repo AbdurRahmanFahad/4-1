@@ -198,17 +198,9 @@ point transform(matrix m, point p)
     return res;
 }
 
-/***************** Main Function *****************/
-
-int main()
+void read_data_1()
 {
-
     freopen("scene.txt", "r", stdin);
-    ofstream stage1, stage2, stage3, debug;
-    stage1.open("stage1.txt");
-    stage2.open("stage2.txt");
-    stage3.open("stage3.txt");
-    debug.open("debug.txt");
 
     double x, y, z;
     cin >> x >> y >> z;
@@ -220,7 +212,7 @@ int main()
 
     cin >> fovY >> aspectRatio >> near >> far;
 
-        l = look - eye;
+    l = look - eye;
     l = normalize(l);
     rr = cross(l, up);
     rr = normalize(rr);
@@ -231,6 +223,12 @@ int main()
     fovY = fovY * acos(-1.0) / 180.0;
     t = near * tan(fovY / 2);
     r = near * tan(fovX / 2);
+}
+
+/***************** Main Function *****************/
+
+int main()
+{
 
     // INIT *******************************************
     matrix trans = trans.translation_matrix(-eye.x, -eye.y, -eye.z);
@@ -253,6 +251,12 @@ int main()
     matrix initial;
     initial.mat[0][0] = initial.mat[3][3] = initial.mat[1][1] = initial.mat[2][2] = 1;
     S.push(initial);
+
+    ofstream stage1, stage2, stage3, debug;
+    stage1.open("stage1.txt");
+    stage2.open("stage2.txt");
+    stage3.open("stage3.txt");
+    debug.open("debug.txt");
 
     while (1)
     {
