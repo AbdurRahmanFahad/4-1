@@ -425,6 +425,93 @@ void solve_1()
 
 /***************** Functions for part 2 *****************/
 
+void read_data()
+{
+    FILE *newfile;
+
+    newfile = fopen("config.txt", "r");
+
+    if (newfile)
+    {
+        fscanf(newfile, "%d %d %lf", &Screen_Width, &Screen_Height, &left_limit_x);
+        fscanf(newfile, "%lf %lf %lf", &bottom_limit_y, &front_z, &rear_z);
+
+        fclose(newfile);
+    }
+
+    newfile = fopen("stage3.txt", "r");
+
+    number_of_triangles = 0;
+
+    if (newfile)
+    {
+        while (!feof(newfile))
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                double x, y, z;
+                fscanf(newfile, "%lf %lf %lf", &x, &y, &z);
+                triangles[number_of_triangles].points[i].x = x;
+                triangles[number_of_triangles].points[i].y = y;
+                triangles[number_of_triangles].points[i].z = z;
+            }
+            number_of_triangles++;
+        }
+
+        fclose(newfile);
+    }
+}
+
+void init_variables()
+{
+    right_limit_x = -left_limit_x;
+    top_limit_y = -bottom_limit_y;
+
+    dx = (right_limit_x * 2) / Screen_Width;
+    dy = (top_limit_y * 2) / Screen_Height;
+
+    Top_Y = top_limit_y - dy / 2.0;
+    Left_X = left_limit_x + dx / 2.0;
+
+    for (int i = 0; i < number_of_triangles; i++)
+    {
+        triangles[i].init();
+        triangles[i].calculate_plane();
+    }
+}
+
+void init_z_buffer()
+{
+    z_buffer = new double *[Screen_Height];
+
+    for (int i = 0; i < Screen_Height; i++)
+    {
+        z_buffer[i] = new double[Screen_Width];
+
+        for (int j = 0; j < Screen_Width; j++)
+        {
+            z_buffer[i][j] = rear_z;
+        }
+    }
+}
+
+void init_frame_buffer()
+{
+    frame_buffer = new point *[Screen_Height]; //point for storing RGB values
+
+    for (int i = 0; i < Screen_Height; i++)
+    {
+        frame_buffer[i] = new point[Screen_Width];
+
+        for (int j = 0; j < Screen_Width; j++)
+        {
+            frame_buffer[i][j].x = 0.0; // r
+            frame_buffer[i][j].y = 0.0; // g
+            frame_buffer[i][j].z = 0.0; // b
+        }
+    }
+}
+
 vector<double> intersecting_points(triangle t, double y_val)
 {
     // y_val is the 'Y' Co-ordinate of Scanline
@@ -561,6 +648,25 @@ void free_memory()
 
 int main()
 {
+    // Part 1*************************
     solve_1();
+
+    // Part 2*************************
+    read_data();
+
+    init_variables();
+
+    init_z_buffer();
+
+    init_frame_buffer();
+
+    solve();
+
+    save_image();
+
+    save_z_buffer();
+
+    free_memory();
+
     return 0;
 }
