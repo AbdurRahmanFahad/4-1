@@ -5,7 +5,7 @@ using namespace std;
 
 // Class Declaration
 class point;
-//class triangle;
+class triangle;
 
 /***************** Point Related *****************/
 
@@ -49,11 +49,89 @@ public:
         return os;
     }
 };
+/***************** Triangle Related *****************/
+
+point cross(point a, point b);
+double dot(point p1, point p2);
+
+double maxx(double a, double b, double c);
+double minn(double a, double b, double c);
+
+class plane
+{
+public:
+    double a, b, c, d;
+};
+
+class triangle
+{
+public:
+    point points[3];
+    plane plane;
+    int r, g, b;
+    double x_max, x_min, y_max, y_min;
+    double upper_scanline, lower_scanline;
+    int row_start, row_end;
+
+    void print()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            cout << points[i].x << " " << points[i].y << " " << points[i].z << endl;
+        }
+        cout << endl;
+    }
+
+    void init()
+    {
+        r = rand() % 256;
+        g = rand() % 256;
+        b = rand() % 256;
+
+        x_max = maxx(points[0].x, points[1].x, points[2].x);
+        x_min = minn(points[0].x, points[1].x, points[2].x);
+        y_max = maxx(points[0].y, points[1].y, points[2].y);
+        y_min = minn(points[0].y, points[1].y, points[2].y);
+
+        upper_scanline = y_max < top_limit_y ? y_max : top_limit_y;
+        lower_scanline = y_min > bottom_limit_y ? y_min : bottom_limit_y;
+
+        row_start = round((Top_Y - lower_scanline) / dy);
+        row_end = round((Top_Y - upper_scanline) / dy);
+    }
+
+    void calculate_plane()
+    {
+        point AB, AC;
+        AB = points[1] - points[0];
+        AC = points[2] - points[0];
+
+        point norm = cross(AB, AC);
+        plane.a = norm.x;
+        plane.b = norm.y;
+        plane.c = norm.z;
+        plane.d = -(dot(norm, points[0]));
+    }
+
+    double get_z(double x, double y)
+    {
+        return (plane.a * x + plane.b * y + plane.d) / (-plane.c);
+    }
+};
+
+triangle triangles[100];
 
 /***************** Global Variables *****************/
-point eye, look, up;
-double fovX, fovY, aspectRatio, near, far, t, r;
-point l, rr, u;
+
+// Global Variables for part 2
+int number_of_triangles;
+int Screen_Width, Screen_Height;
+double left_limit_x, bottom_limit_y, front_z, rear_z;
+double right_limit_x, top_limit_y;
+double dx, dy, Top_Y, Left_X;
+
+double **z_buffer;
+point **frame_buffer;
 
 /***************** Point Functions *****************/
 
@@ -205,8 +283,23 @@ point transform(matrix m, point p)
     return res;
 }
 
+double maxx(double a, double b, double c)
+{
+    return max(max(a, b), c);
+}
+
+double minn(double a, double b, double c)
+{
+    return min(min(a, b), c);
+}
+
 void solve_1()
 {
+
+    point eye, look, up;
+    double fovX, fovY, aspectRatio, near, far, t, r;
+    point l, rr, u;
+
     freopen("scene.txt", "r", stdin);
 
     double x, y, z;
@@ -328,6 +421,140 @@ void solve_1()
             State.pop();
         }
     }
+}
+
+/***************** Functions for part 2 *****************/
+
+vector<double> intersecting_points(triangle t, double y_val)
+{
+    // y_val is the 'Y' Co-ordinate of Scanline
+    vector<double> x_values;
+    int count = 0;
+
+    for (int i = 0; i < 3; i++) // checking every two point combination
+    {
+        point point1 = t.points[i];
+        point point2 = t.points[(i + 1) % 3];
+
+        // point1-point2 forms a line of the triangle
+
+        if (point1.y == point2.y) // If Parallel to y axis
+            continue;
+
+        // (how far from the point) vs (length of line) 'ratio'
+        double m = (y_val - point1.y) / (point2.y - point1.y);
+
+        if (m < 0 || m > 1) // means Outside the Line
+            continue;
+
+        if (count < 2) // Only Two Intersection Points
+        {
+            x_values.push_back(point1.x + m * (point2.x - point1.x)); // Interpolation
+            count++;
+        }
+    }
+    sort(x_values.begin(), x_values.end()); // just sorting the points left to right
+
+    return x_values;
+}
+
+void solve()
+{
+
+    for (int i = 0; i < number_of_triangles; i++)
+    {
+        for (int j = triangles[i].row_start; j >= triangles[i].row_end; j--)
+        {
+            double y_val = Top_Y - j * dy;
+
+            double left, right;
+
+            // need to review******************************
+
+            vector<double> temp = intersecting_points(triangles[i], y_val);
+            if (temp.size() < 2)
+                continue;
+            left = temp[0];
+            right = temp[1];
+
+            // need to review******************************
+
+            if (left < left_limit_x)
+                left = left_limit_x;
+            if (right > right_limit_x)
+                right = right_limit_x;
+
+            int column_start, column_end;
+            column_start = round((left - Left_X) / dx);
+            column_end = round((right - Left_X) / dx);
+            //cout << column_start << " " << column_end << endl;
+            for (int k = column_start; k <= column_end; k++)
+            {
+
+                double x_val = Left_X + k * dx;
+                double z_val = triangles[i].get_z(x_val, y_val);
+                if (j < 0 || j >= Screen_Height || k < 0 || k >= Screen_Width)
+                    continue;
+
+                if (z_val < z_buffer[j][k] && z_val >= front_z)
+                {
+                    z_buffer[j][k] = z_val;
+                    frame_buffer[j][k].x = triangles[i].r;
+                    frame_buffer[j][k].y = triangles[i].g;
+                    frame_buffer[j][k].z = triangles[i].b;
+                }
+            }
+        }
+    }
+}
+
+void save_image()
+{
+    bitmap_image output(Screen_Width, Screen_Height);
+
+    for (int i = 0; i < Screen_Width; i++)
+    {
+        for (int j = 0; j < Screen_Height; j++)
+        {
+            output.set_pixel(j, i, frame_buffer[i][j].x, frame_buffer[i][j].y, frame_buffer[i][j].z);
+        }
+    }
+
+    output.save_image("output.bmp");
+}
+
+void save_z_buffer()
+{
+    FILE *newfile;
+
+    newfile = fopen("z_buffer.txt", "w+");
+
+    for (int i = 0; i < Screen_Width; i++)
+    {
+        for (int j = 0; j < Screen_Height; j++)
+        {
+            if (z_buffer[i][j] < rear_z)
+                fprintf(newfile, "%lf ", z_buffer[i][j]);
+        }
+
+        fprintf(newfile, "\n");
+    }
+
+    fclose(newfile);
+}
+
+void free_memory()
+{
+    delete triangles;
+
+    for (int i = 0; i < Screen_Height; i++)
+    {
+        delete z_buffer[i];
+        delete frame_buffer[i];
+    }
+
+    delete z_buffer;
+    delete frame_buffer;
 }
 
 /***************** Main Function *****************/
