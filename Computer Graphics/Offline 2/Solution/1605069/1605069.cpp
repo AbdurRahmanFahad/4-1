@@ -198,7 +198,7 @@ point transform(matrix m, point p)
     return res;
 }
 
-void read_data_1()
+void solve_1()
 {
     freopen("scene.txt", "r", stdin);
 
@@ -223,12 +223,6 @@ void read_data_1()
     fovY = fovY * acos(-1.0) / 180.0;
     t = near * tan(fovY / 2);
     r = near * tan(fovX / 2);
-}
-
-/***************** Main Function *****************/
-
-int main()
-{
 
     // INIT *******************************************
     matrix trans = trans.translation_matrix(-eye.x, -eye.y, -eye.z);
@@ -327,6 +321,12 @@ int main()
             State.pop();
         }
     }
+}
 
-    return 0;
+/***************** Main Function *****************/
+
+int main()
+{
+
+        return 0;
 }
