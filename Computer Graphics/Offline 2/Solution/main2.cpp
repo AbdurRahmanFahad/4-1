@@ -225,28 +225,32 @@ double dot(point p1, point p2)
 
 vector<double> intersecting_points(triangle t, double y_val)
 {
-    vector<double> left_right_x, px;
-    int j = 0;
-    for (int i = 0; i < 3; i++)
+    vector<double> x_values;
+    int count = 0;
+    for (int i = 0; i < 3; i++) // checking every two point combination
     {
-        point p0 = t.points[i];
-        point p1 = t.points[(i + 1) % 3];
+        point point1 = t.points[i];
+        point point2 = t.points[(i + 1) % 3];
 
-        if (p0.y == p1.y)
+        // point1-point2 forms a line of the triangle
+
+        if (point1.y == point2.y) // If Parallel to y axis
             continue;
 
-        double m = (y_val - p0.y) / (p1.y - p0.y);
-        if (m < 0 || m > 1)
+        // (how far from the point) vs (length of line) 'ratio'
+        double m = (y_val - point1.y) / (point2.y - point1.y);
+
+        if (m < 0 || m > 1) // means Outside the Line
             continue;
-        if (j < 2)
+        if (count < 2) // Only Two Intersection Points
         {
-            px.push_back(p0.x + m * (p1.x - p0.x));
-            j++;
+            x_values.push_back(point1.x + m * (point2.x - point1.x)); // Interpolation
+            count++;
         }
     }
-    sort(px.begin(), px.end());
+    sort(x_values.begin(), x_values.end()); // just sorting the points left to right
 
-    return px;
+    return x_values;
 }
 
 void solve()
