@@ -49,6 +49,19 @@ public:
         return os;
     }
 };
+
+/***************** Global Variables *****************/
+
+// Global Variables for part 2
+int number_of_triangles;
+int Screen_Width, Screen_Height;
+double left_limit_x, bottom_limit_y, front_z, rear_z;
+double right_limit_x, top_limit_y;
+double dx, dy, Top_Y, Left_X;
+
+double **z_buffer;
+point **frame_buffer;
+
 /***************** Triangle Related *****************/
 
 point cross(point a, point b);
@@ -120,18 +133,6 @@ public:
 };
 
 triangle triangles[100];
-
-/***************** Global Variables *****************/
-
-// Global Variables for part 2
-int number_of_triangles;
-int Screen_Width, Screen_Height;
-double left_limit_x, bottom_limit_y, front_z, rear_z;
-double right_limit_x, top_limit_y;
-double dx, dy, Top_Y, Left_X;
-
-double **z_buffer;
-point **frame_buffer;
 
 /***************** Point Functions *****************/
 
@@ -283,16 +284,6 @@ point transform(matrix m, point p)
     return res;
 }
 
-double maxx(double a, double b, double c)
-{
-    return max(max(a, b), c);
-}
-
-double minn(double a, double b, double c)
-{
-    return min(min(a, b), c);
-}
-
 void solve_1()
 {
 
@@ -424,6 +415,15 @@ void solve_1()
 }
 
 /***************** Functions for part 2 *****************/
+double maxx(double a, double b, double c)
+{
+    return max(max(a, b), c);
+}
+
+double minn(double a, double b, double c)
+{
+    return min(min(a, b), c);
+}
 
 void read_data()
 {
