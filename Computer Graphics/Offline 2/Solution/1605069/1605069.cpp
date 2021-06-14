@@ -531,6 +531,8 @@ vector<double> intersecting_points(triangle t, double y_val)
         // (how far from the point) vs (length of line) 'ratio'
         double m = (y_val - point1.y) / (point2.y - point1.y);
 
+        // if point1.y=<y_val<=point2.y
+
         if (m < 0 || m > 1) // means Outside the Line
             continue;
 
