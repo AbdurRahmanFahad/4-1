@@ -119,8 +119,35 @@ public:
     }
 };
 
+class General : public Object
+{
+
+public:
+    double A, B, C, D, E, F, G, H, I, J;
+
+    General() {}
+
+    General(Point ref, double l, double w, double h)
+    {
+        reference_point = ref;
+        length = l, width = w, height = h;
+    }
+
+    void set_ABCD(double a, double b, double c, double d, double e, double f, double g, double h, double i, double j)
+    {
+        A = a, B = b, C = c, D = d, E = e, F = f;
+        G = g, H = h, I = i, J = j;
+    }
+
+    void draw()
+    {
+        cout << "Drawing General" << endl;
+    }
+};
+
 class Floor : public Object
 {
+public:
     Floor() {}
 
     Floor(double floorWidth, double tileWidth)

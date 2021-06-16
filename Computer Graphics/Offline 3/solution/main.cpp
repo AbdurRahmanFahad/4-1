@@ -26,6 +26,7 @@ struct point l = {-1 / sqrt(2), -1 / sqrt(2), 0};
 // Vectors for objects and light sources
 vector<Object> objects;
 vector<Light> lights;
+
 // Global Variables
 int recursion_level, pixels, total_objects, total_light_sources;
 
