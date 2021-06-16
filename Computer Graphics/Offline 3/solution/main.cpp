@@ -13,7 +13,6 @@ using namespace std;
 
 int drawgrid = 1;
 int drawaxes;
-double angle;
 
 struct point
 {
@@ -25,6 +24,11 @@ struct point pos = {100, 100, 60};
 struct point u = {0, 0, 1};
 struct point r = {-1 / sqrt(2), 1 / sqrt(2), 0};
 struct point l = {-1 / sqrt(2), -1 / sqrt(2), 0};
+
+// Vectors for objects and light sources
+
+// Global Variables
+int recursion_level, pixels, total_objects, total_light_sources;
 
 struct point cross_product(struct point v1, struct point v2)
 {
@@ -349,7 +353,6 @@ void init()
     //codes for initialization
     drawgrid = 1;
     drawaxes = 1;
-    angle = 0;
 
     glClearColor(0, 0, 0, 0);
 
@@ -359,6 +362,71 @@ void init()
 
     gluPerspective(80, 1, 1, 1000.0);
 }
+
+// ****************** Offline 3 codes here ******************
+
+void loadData()
+{
+    freopen("scene.txt", "r", stdin);
+    cin >> recursion_level;
+    cin >> pixels;
+    cin >> total_objects;
+
+    for (int i = 0; i < total_objects; i++)
+    {
+        string s;
+        cin >> s;
+        if (s == "sphere")
+        {
+            double x, y, z, radius, r, g, b;
+            double ambient, diffuse, specular, recursive_reflection_coefficient;
+            double shininess;
+            cin >> x >> y >> z;
+            cin >> radius;
+            cin >> r >> g >> b;
+            cin >> ambient >> diffuse >> specular >> recursive_reflection_coefficient;
+            cin >> shininess;
+        }
+        else if (s == "triangle")
+        {
+            double x1, y1, z1, x2, y2, z2, x3, y3, z3;
+            double r, g, b;
+            double ambient, diffuse, specular, recursive_reflection_coefficient;
+            double shininess;
+            cin >> x1 >> y1 >> z1;
+            cin >> x2 >> y2 >> z2;
+            cin >> x3 >> y3 >> z3;
+
+            cin >> r >> g >> b;
+
+            cin >> ambient >> diffuse >> specular >> recursive_reflection_coefficient;
+            cin >> shininess;
+        }
+        else if (s == "general")
+        {
+            double A, B, C, D, E, F, G, H, I, J;
+            cin >> A >> B >> C >> D >> E >> F >> G >> H >> I >> J;
+            double x, y, z, length, width, height;
+            cin >> x >> y >> z >> length >> width >> height;
+
+            double ambient, diffuse, specular, recursive_reflection_coefficient;
+            double shininess;
+            cin >> ambient >> diffuse >> specular >> recursive_reflection_coefficient;
+            cin >> shininess;
+        }
+    }
+
+    cin >> total_light_sources;
+    for (int i = 0; i < total_light_sources; i++)
+    {
+        double x, y, z;
+        cin >> x >> y >> z;
+        double r, g, b;
+        cin >> r >> g >> b;
+    }
+}
+
+// ****************** Offline 3 codes end here ******************
 
 int main(int argc, char **argv)
 {
