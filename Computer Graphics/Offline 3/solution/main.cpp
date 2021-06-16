@@ -1,9 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <iostream>
+#include <bits/stdc++.h>
 
 #include "bitmap_image.hpp"
+#include "1605069_Header.h"
 #include <windows.h>
 #include <glut.h>
 
@@ -26,7 +24,8 @@ struct point r = {-1 / sqrt(2), 1 / sqrt(2), 0};
 struct point l = {-1 / sqrt(2), -1 / sqrt(2), 0};
 
 // Vectors for objects and light sources
-
+vector<Object> objects;
+vector<Light> lights;
 // Global Variables
 int recursion_level, pixels, total_objects, total_light_sources;
 
