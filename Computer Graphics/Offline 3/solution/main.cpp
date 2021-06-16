@@ -176,11 +176,6 @@ void drawSphere(double radius, int slices, int stacks)
     }
 }
 
-void drawSS()
-{
-    glColor3f(1, 0, 0);
-}
-
 void keyboardListener(unsigned char key, int x, int y)
 {
     //print_my(l_gun);
@@ -320,6 +315,14 @@ void mouseListener(int button, int state, int x, int y)
     }
 }
 
+void draw_all()
+{
+    for (int i = 0; i < total_objects; i++)
+    {
+        objects[i]->draw();
+    }
+}
+
 void display()
 {
 
@@ -338,7 +341,7 @@ void display()
     drawAxes();
     drawGrid();
 
-    drawSS();
+    draw_all();
 
     glutSwapBuffers();
 }
@@ -473,14 +476,6 @@ void loadData()
     objects.push_back(temp);
 }
 
-void testing()
-{
-    for (int i = 0; i < total_objects; i++)
-    {
-        objects[i]->draw();
-    }
-}
-
 void free_memory()
 {
     for (int i = 0; i < total_objects; i++)
@@ -499,7 +494,7 @@ int main(int argc, char **argv)
 {
 
     loadData();
-    testing();
+    //testing();
 
     glutInit(&argc, argv);
     glutInitWindowSize(500, 500);

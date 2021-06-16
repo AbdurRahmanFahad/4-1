@@ -1,4 +1,7 @@
 #include <bits/stdc++.h>
+#include <windows.h>
+#include <glut.h>
+
 using namespace std;
 
 class Point
@@ -55,6 +58,13 @@ public:
     }
 };
 
+class Ray
+{
+public:
+    Point start, dir;
+    Ray() {}
+};
+
 class Object
 {
 public:
@@ -83,6 +93,11 @@ public:
         coEfficients[2] = c,
         coEfficients[3] = d;
     }
+
+    virtual double intersect(Ray *r, double *color, int level)
+    {
+        return -1.0;
+    }
 };
 
 class Sphere : public Object
@@ -97,7 +112,13 @@ public:
 
     void draw()
     {
-        cout << "Drawing Sphere" << endl;
+        //cout << "Drawing Sphere" << endl;
+
+        glPushMatrix();
+        glTranslated(reference_point.x, reference_point.y, reference_point.z);
+        glColor3f(color[0], color[1], color[2]);
+        glutSolidSphere(length, 100, 100);
+        glPopMatrix();
     }
 };
 
@@ -115,7 +136,7 @@ public:
 
     void draw()
     {
-        cout << "Drawing Triangle" << endl;
+        //cout << "Drawing Triangle" << endl;
     }
 };
 
@@ -141,7 +162,7 @@ public:
 
     void draw()
     {
-        cout << "Drawing General" << endl;
+        //cout << "Drawing General" << endl;
     }
 };
 
@@ -158,6 +179,6 @@ public:
 
     void draw()
     {
-        cout << "drawing Floor" << endl;
+        //cout << "drawing Floor" << endl;
     }
 };
