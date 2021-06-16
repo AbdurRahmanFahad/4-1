@@ -24,7 +24,7 @@ struct point r = {-1 / sqrt(2), 1 / sqrt(2), 0};
 struct point l = {-1 / sqrt(2), -1 / sqrt(2), 0};
 
 // Vectors for objects and light sources
-vector<Object> objects;
+vector<Object *> objects;
 vector<Light> lights;
 
 // Global Variables
@@ -372,12 +372,15 @@ void loadData()
     cin >> pixels;
     cin >> total_objects;
 
+    Object *temp;
+
     for (int i = 0; i < total_objects; i++)
     {
         string s;
         cin >> s;
         if (s == "sphere")
         {
+            // Input
             double x, y, z, radius, r, g, b;
             double ambient, diffuse, specular, recursive_reflection_coefficient;
             int shininess;
@@ -386,13 +389,24 @@ void loadData()
             cin >> r >> g >> b;
             cin >> ambient >> diffuse >> specular >> recursive_reflection_coefficient;
             cin >> shininess;
+
+            // make object
+
+            temp = new Sphere(Point(x, y, z), radius);
+            temp->setColor(r, g, b);
+            temp->setShine(shininess);
+            temp->setCoEfficients(ambient, diffuse, specular, recursive_reflection_coefficient);
+            objects.push_back(temp);
         }
         else if (s == "triangle")
         {
+            // Input
+
             double x1, y1, z1, x2, y2, z2, x3, y3, z3;
             double r, g, b;
             double ambient, diffuse, specular, recursive_reflection_coefficient;
             int shininess;
+
             cin >> x1 >> y1 >> z1;
             cin >> x2 >> y2 >> z2;
             cin >> x3 >> y3 >> z3;
@@ -401,18 +415,39 @@ void loadData()
 
             cin >> ambient >> diffuse >> specular >> recursive_reflection_coefficient;
             cin >> shininess;
+
+            // make object
+
+            temp = new Triangle(Point(x1, y1, z1), Point(x2, y2, z2), Point(x3, y3, z3));
+            temp->setColor(r, g, b);
+            temp->setShine(shininess);
+            temp->setCoEfficients(ambient, diffuse, specular, recursive_reflection_coefficient);
+            objects.push_back(temp);
         }
         else if (s == "general")
         {
+            // Input
+
             double A, B, C, D, E, F, G, H, I, J;
             cin >> A >> B >> C >> D >> E >> F >> G >> H >> I >> J;
             double x, y, z, length, width, height;
             cin >> x >> y >> z >> length >> width >> height;
 
+            double r, g, b;
             double ambient, diffuse, specular, recursive_reflection_coefficient;
             int shininess;
+            cin >> r >> g >> b;
             cin >> ambient >> diffuse >> specular >> recursive_reflection_coefficient;
             cin >> shininess;
+
+            // make object
+            General *temp1;
+            temp1 = new General(Point(x, y, z), length, width, height);
+            temp1->set_ABCD(A, B, C, D, E, F, G, H, I, J);
+            temp1->setColor(r, g, b);
+            temp1->setShine(shininess);
+            temp1->setCoEfficients(ambient, diffuse, specular, recursive_reflection_coefficient);
+            objects.push_back(temp1);
         }
     }
 
