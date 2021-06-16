@@ -72,33 +72,6 @@ void drawAxes()
     }
 }
 
-void drawGrid()
-{
-    int i;
-    if (drawgrid == 1)
-    {
-        glColor3f(0.6, 0.6, 0.6); //grey
-        glBegin(GL_LINES);
-        {
-            for (i = -8; i <= 8; i++)
-            {
-
-                if (i == 0)
-                    continue; //SKIP the MAIN axes
-
-                //lines parallel to Y-axis
-                glVertex3f(i * 10, -90, 0);
-                glVertex3f(i * 10, 90, 0);
-
-                //lines parallel to X-axis
-                glVertex3f(-90, i * 10, 0);
-                glVertex3f(90, i * 10, 0);
-            }
-        }
-        glEnd();
-    }
-}
-
 void drawSquare(double a)
 {
     //glColor3f(1.0,0.0,0.0);
@@ -339,8 +312,6 @@ void display()
     glMatrixMode(GL_MODELVIEW);
 
     drawAxes();
-    drawGrid();
-
     draw_all();
 
     glutSwapBuffers();
@@ -354,7 +325,7 @@ void animate()
 void init()
 {
     //codes for initialization
-    drawgrid = 1;
+    drawgrid = 0;
     drawaxes = 1;
 
     glClearColor(0, 0, 0, 0);
@@ -474,6 +445,7 @@ void loadData()
     // set coEfficients
     // set shine
     objects.push_back(temp);
+    total_objects++;
 }
 
 void free_memory()

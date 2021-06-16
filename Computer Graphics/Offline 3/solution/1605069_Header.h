@@ -175,16 +175,35 @@ public:
 class Floor : public Object
 {
 public:
+    int no_tiles;
+
     Floor() {}
 
-    Floor(double floorWidth, double tileWidth)
+    Floor(int floorWidth, int tileWidth)
     {
         reference_point = Point(-floorWidth / 2, -floorWidth / 2, 0);
         length = tileWidth;
+        no_tiles = floorWidth / tileWidth;
     }
 
     void draw()
     {
         //cout << "drawing Floor" << endl;
+        glBegin(GL_QUADS);
+        {
+            for (int i = 0; i < no_tiles; i++)
+            {
+                for (int j = 0; j < no_tiles; j++)
+                {
+                    glColor3f((i + j) % 2, (i + j) % 2, (i + j) % 2);
+
+                    glVertex3f(reference_point.x + i * length, reference_point.y + j * length, reference_point.z);
+                    glVertex3f(reference_point.x + i * length, reference_point.y + (j + 1) * length, reference_point.z);
+                    glVertex3f(reference_point.x + (i + 1) * length, reference_point.y + (j + 1) * length, reference_point.z);
+                    glVertex3f(reference_point.x + (i + 1) * length, reference_point.y + j * length, reference_point.z);
+                }
+            }
+        }
+        glEnd();
     }
 };
