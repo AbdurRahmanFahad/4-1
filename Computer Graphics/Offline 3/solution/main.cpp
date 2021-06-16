@@ -451,6 +451,8 @@ void loadData()
         }
     }
 
+    // Light Sources Input ********
+
     cin >> total_light_sources;
     for (int i = 0; i < total_light_sources; i++)
     {
@@ -458,6 +460,24 @@ void loadData()
         cin >> x >> y >> z;
         double r, g, b;
         cin >> r >> g >> b;
+        Light l(Point(x, y, z), r, g, b);
+        lights.push_back(l);
+    }
+
+    // Floor ***********************
+
+    temp = new Floor(1000, 20);
+    // set color
+    // set coEfficients
+    // set shine
+    objects.push_back(temp);
+}
+
+void testing()
+{
+    for (int i = 0; i < total_objects; i++)
+    {
+        objects[i]->draw();
     }
 }
 
@@ -465,6 +485,10 @@ void loadData()
 
 int main(int argc, char **argv)
 {
+
+    loadData();
+    testing();
+
     glutInit(&argc, argv);
     glutInitWindowSize(500, 500);
     glutInitWindowPosition(0, 0);
