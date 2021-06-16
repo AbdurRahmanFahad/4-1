@@ -380,7 +380,7 @@ void loadData()
         {
             double x, y, z, radius, r, g, b;
             double ambient, diffuse, specular, recursive_reflection_coefficient;
-            double shininess;
+            int shininess;
             cin >> x >> y >> z;
             cin >> radius;
             cin >> r >> g >> b;
@@ -392,7 +392,7 @@ void loadData()
             double x1, y1, z1, x2, y2, z2, x3, y3, z3;
             double r, g, b;
             double ambient, diffuse, specular, recursive_reflection_coefficient;
-            double shininess;
+            int shininess;
             cin >> x1 >> y1 >> z1;
             cin >> x2 >> y2 >> z2;
             cin >> x3 >> y3 >> z3;
@@ -410,7 +410,7 @@ void loadData()
             cin >> x >> y >> z >> length >> width >> height;
 
             double ambient, diffuse, specular, recursive_reflection_coefficient;
-            double shininess;
+            int shininess;
             cin >> ambient >> diffuse >> specular >> recursive_reflection_coefficient;
             cin >> shininess;
         }
