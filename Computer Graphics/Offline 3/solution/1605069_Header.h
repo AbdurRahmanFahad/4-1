@@ -137,6 +137,12 @@ public:
     void draw()
     {
         //cout << "Drawing Triangle" << endl;
+        glBegin(GL_TRIANGLES);
+        glColor3f(color[0], color[1], color[2]);
+        glVertex3f(p1.x, p1.y, p1.z);
+        glVertex3f(p2.x, p2.y, p2.z);
+        glVertex3f(p3.x, p3.y, p3.z);
+        glEnd();
     }
 };
 
