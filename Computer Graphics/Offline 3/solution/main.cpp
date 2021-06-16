@@ -294,6 +294,11 @@ void draw_all()
     {
         objects[i]->draw();
     }
+
+    for (int i = 0; i < total_light_sources; i++)
+    {
+        lights[i].draw();
+    }
 }
 
 void display()

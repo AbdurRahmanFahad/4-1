@@ -56,6 +56,15 @@ public:
         color[0] = r, color[1] = g, color[2] = b;
         light_pos.x = pos.x, light_pos.y = pos.y, light_pos.z = pos.z;
     }
+
+    void draw()
+    {
+        glPushMatrix();
+        glTranslated(light_pos.x, light_pos.y, light_pos.z);
+        glColor3f(color[0], color[1], color[2]);
+        glutSolidSphere(2, 100, 100);
+        glPopMatrix();
+    }
 };
 
 class Ray
@@ -189,18 +198,22 @@ public:
     void draw()
     {
         //cout << "drawing Floor" << endl;
+        double p = reference_point.x;
+        double q = reference_point.y;
+        double r = reference_point.z;
         glBegin(GL_QUADS);
         {
             for (int i = 0; i < no_tiles; i++)
             {
                 for (int j = 0; j < no_tiles; j++)
                 {
-                    glColor3f((i + j) % 2, (i + j) % 2, (i + j) % 2);
+                    int c = (i + j) % 2;
+                    glColor3f(c, c, c);
 
-                    glVertex3f(reference_point.x + i * length, reference_point.y + j * length, reference_point.z);
-                    glVertex3f(reference_point.x + i * length, reference_point.y + (j + 1) * length, reference_point.z);
-                    glVertex3f(reference_point.x + (i + 1) * length, reference_point.y + (j + 1) * length, reference_point.z);
-                    glVertex3f(reference_point.x + (i + 1) * length, reference_point.y + j * length, reference_point.z);
+                    glVertex3f(p + i * length, q + j * length, r);
+                    glVertex3f(p + i * length, q + (j + 1) * length, r);
+                    glVertex3f(p + (i + 1) * length, q + (j + 1) * length, r);
+                    glVertex3f(p + (i + 1) * length, q + j * length, r);
                 }
             }
         }
