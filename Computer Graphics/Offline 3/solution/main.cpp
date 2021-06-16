@@ -9,9 +9,6 @@
 
 using namespace std;
 
-int drawgrid = 1;
-int drawaxes;
-
 struct point
 {
     double x, y, z;
@@ -52,112 +49,10 @@ struct point normalize(struct point v)
     return res;
 };
 
-void drawAxes()
-{
-    if (drawaxes == 1)
-    {
-        glColor3f(1.0, 1.0, 1.0);
-        glBegin(GL_LINES);
-        {
-            glVertex3f(250, 0, 0);
-            glVertex3f(-250, 0, 0);
-
-            glVertex3f(0, -250, 0);
-            glVertex3f(0, 250, 0);
-
-            glVertex3f(0, 0, 250);
-            glVertex3f(0, 0, -250);
-        }
-        glEnd();
-    }
-}
-
-void drawSquare(double a)
-{
-    //glColor3f(1.0,0.0,0.0);
-    glBegin(GL_QUADS);
-    {
-        glVertex3f(a, a, 2);
-        glVertex3f(a, -a, 2);
-        glVertex3f(-a, -a, 2);
-        glVertex3f(-a, a, 2);
-    }
-    glEnd();
-}
-
-void drawCircle(double radius, int segments)
-{
-    int i;
-    struct point points[100];
-    glColor3f(0.7, 0.7, 0.7);
-    //generate points
-    for (i = 0; i <= segments; i++)
-    {
-        points[i].x = radius * cos(((double)i / (double)segments) * 2 * pi);
-        points[i].y = radius * sin(((double)i / (double)segments) * 2 * pi);
-    }
-    //draw segments using generated points
-    for (i = 0; i < segments; i++)
-    {
-        glBegin(GL_LINES);
-        {
-            glVertex3f(points[i].x, points[i].y, 0);
-            glVertex3f(points[i + 1].x, points[i + 1].y, 0);
-        }
-        glEnd();
-    }
-}
-
-void drawSphere(double radius, int slices, int stacks)
-{
-    struct point points[100][100];
-    int i, j;
-    double h, r;
-    //generate points
-    for (i = 0; i <= stacks; i++)
-    {
-        h = radius * sin(((double)i / (double)stacks) * (pi / 2));
-        r = radius * cos(((double)i / (double)stacks) * (pi / 2));
-        for (j = 0; j <= slices; j++)
-        {
-            points[i][j].x = r * cos(((double)j / (double)slices) * 2 * pi);
-            points[i][j].y = r * sin(((double)j / (double)slices) * 2 * pi);
-            points[i][j].z = h;
-        }
-    }
-    //draw quads using generated points
-    for (i = 0; i < stacks; i++)
-    {
-        glColor3f((double)i / (double)stacks, (double)i / (double)stacks, (double)i / (double)stacks);
-        for (j = 0; j < slices; j++)
-        {
-            glBegin(GL_QUADS);
-            {
-                //upper hemisphere
-                glVertex3f(points[i][j].x, points[i][j].y, points[i][j].z);
-                glVertex3f(points[i][j + 1].x, points[i][j + 1].y, points[i][j + 1].z);
-                glVertex3f(points[i + 1][j + 1].x, points[i + 1][j + 1].y, points[i + 1][j + 1].z);
-                glVertex3f(points[i + 1][j].x, points[i + 1][j].y, points[i + 1][j].z);
-                //lower hemisphere
-                glVertex3f(points[i][j].x, points[i][j].y, -points[i][j].z);
-                glVertex3f(points[i][j + 1].x, points[i][j + 1].y, -points[i][j + 1].z);
-                glVertex3f(points[i + 1][j + 1].x, points[i + 1][j + 1].y, -points[i + 1][j + 1].z);
-                glVertex3f(points[i + 1][j].x, points[i + 1][j].y, -points[i + 1][j].z);
-            }
-            glEnd();
-        }
-    }
-}
-
 void keyboardListener(unsigned char key, int x, int y)
 {
-    //print_my(l_gun);
     switch (key)
     {
-
-    case 'g':
-        drawgrid = 1 - drawgrid;
-        break;
     case '1':
     {
         l.x = l.x * cos(2 * pi - 3 * pi / 180.0) + r.x * sin(2 * pi - 3 * pi / 180.0);
@@ -268,7 +163,7 @@ void specialKeyListener(int key, int x, int y)
 }
 
 void mouseListener(int button, int state, int x, int y)
-{ //x, y is the x-y of the screen (2D)
+{
     switch (button)
     {
     case GLUT_LEFT_BUTTON:
@@ -276,11 +171,7 @@ void mouseListener(int button, int state, int x, int y)
         break;
 
     case GLUT_RIGHT_BUTTON:
-        //........
-        if (state == GLUT_DOWN)
-        {
-            drawaxes = 1 - drawaxes;
-        }
+
         break;
 
     default:
@@ -313,10 +204,9 @@ void display()
     glLoadIdentity();
 
     gluLookAt(pos.x, pos.y, pos.z, pos.x + l.x, pos.y + l.y, pos.z + l.z, u.x, u.y, u.z);
-    //gluLookAt(pos.x,pos.y,pos.z,	0,0,0,	0,0,1);
+
     glMatrixMode(GL_MODELVIEW);
 
-    drawAxes();
     draw_all();
 
     glutSwapBuffers();
@@ -330,8 +220,6 @@ void animate()
 void init()
 {
     //codes for initialization
-    drawgrid = 0;
-    drawaxes = 1;
 
     glClearColor(0, 0, 0, 0);
 
@@ -445,7 +333,7 @@ void loadData()
 
     // Floor ***********************
 
-    temp = new Floor(1000, 20);
+    temp = new Floor(500, 20);
     // set color
     // set coEfficients
     // set shine
@@ -471,7 +359,6 @@ int main(int argc, char **argv)
 {
 
     loadData();
-    //testing();
 
     glutInit(&argc, argv);
     glutInitWindowSize(500, 500);
