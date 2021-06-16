@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 
+#include "bitmap_image.hpp"
 #include <windows.h>
 #include <glut.h>
-#include <iostream>
 
 #define pi (2 * acos(0.0))
 
