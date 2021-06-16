@@ -118,3 +118,19 @@ public:
         cout << "Drawing Triangle" << endl;
     }
 };
+
+class Floor : public Object
+{
+    Floor() {}
+
+    Floor(double floorWidth, double tileWidth)
+    {
+        reference_point = Point(-floorWidth / 2, -floorWidth / 2, 0);
+        length = tileWidth;
+    }
+
+    void draw()
+    {
+        cout << "drawing Floor" << endl;
+    }
+};
