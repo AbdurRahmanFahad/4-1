@@ -481,6 +481,18 @@ void testing()
     }
 }
 
+void free_memory()
+{
+    for (int i = 0; i < total_objects; i++)
+    {
+        Object *p = objects.back();
+        objects.pop_back();
+        delete p;
+    }
+
+    lights.clear();
+}
+
 // ****************** Offline 3 codes end here ******************
 
 int main(int argc, char **argv)
@@ -509,5 +521,6 @@ int main(int argc, char **argv)
 
     glutMainLoop(); //The main loop of OpenGL
 
+    free_memory();
     return 0;
 }
