@@ -49,6 +49,51 @@ struct point normalize(struct point v)
     return res;
 };
 
+void Capture()
+{
+    bitmap_image image(pixels, pixels);
+    // View angle is 80
+    double theta = (80.0 / 2.0);
+    theta = (pi * theta) / 180.0;
+    double plane_dist = (500 / 2) / tan(theta);
+
+    Point uu(u.x, u.y, u.z);
+    Point rr(r.x, r.y, r.z);
+    Point ll(l.x, l.y, l.z);
+    Point eye(pos.x, pos.y, pos.z);
+    Point temp(0.0, 0.0, 0.0);
+    // topleft = eye + l*planeDistance - r*windowWidth/2 + u*windowHeight / 2
+
+    temp = ll * plane_dist;
+    Point topleft = eye + temp;
+    temp = rr * 250.0;
+    topleft = topleft - temp;
+    temp = uu * 250.0;
+    topleft = topleft + temp;
+
+    double du = (double)500 / pixels; // window_Width = 500
+    double dv = (double)500 / pixels; // window_Height = 500
+
+    //// Choose middle of the grid cell
+    //topleft = topleft + r * (0.5 * du) - u * (0.5 * dv)
+
+    int nearest;
+    double t, tMin;
+    Point curPixel;
+    double *dummy_color = new double[3];
+
+    for (int i = 0; i < pixels; i++)
+    {
+        for (int j = 0; j < pixels; j++)
+        {
+            temp = rr * (i * du);
+            curPixel = topleft + temp;
+            temp = uu * (j * dv);
+            curPixel = curPixel - temp;
+        }
+    }
+}
+
 void keyboardListener(unsigned char key, int x, int y)
 {
     switch (key)
