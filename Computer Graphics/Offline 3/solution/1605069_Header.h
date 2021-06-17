@@ -4,6 +4,11 @@
 
 using namespace std;
 
+double Dot_product(Point a, Point b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
 class Point
 {
 public:
@@ -141,6 +146,35 @@ public:
         glColor3f(color[0], color[1], color[2]);
         glutSolidSphere(length, 100, 100);
         glPopMatrix();
+    }
+
+    double get_t(Ray ray)
+    {
+        // P(t) = Ro + t*Rd
+        // (Ro + tRd) · (Ro + tRd) - r2  =  0
+
+        Point R0, Rd;
+        R0 = ray.start, Rd = ray.dir;
+        R0 = R0 - reference_point;
+
+        //  Rd·Rdt2 + 2Rd·Rot + Ro·Ro - r2  =  0
+        // at2 + bt + c = 0
+
+        double a, b, c, d, t1, t2;
+        a = 1.0;
+        b = 2 * Dot_product(R0, Rd);
+        c = Dot_product(R0, R0) - length * length;
+
+        d = b * b - 4 * a * c;
+
+        if (d <= 0) // imaginary value or tangent
+            return -1;
+
+        t1 = (-b + d) / (2 * a);
+        t2 = (-b - d) / (2 * a);
+
+        // return closest
+        return min(t1, t2);
     }
 };
 
