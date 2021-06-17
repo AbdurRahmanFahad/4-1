@@ -9,6 +9,17 @@ double Dot_product(Point a, Point b)
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
+Point Cross_product(Point v1, Point v2)
+{
+    Point res;
+
+    res.x = v1.y * v2.z - v1.z * v2.y;
+    res.y = v1.z * v2.x - v1.x * v2.z;
+    res.z = v1.x * v2.y - v1.y * v2.x;
+
+    return res;
+};
+
 class Point
 {
 public:
@@ -121,7 +132,7 @@ public:
         coEfficients[3] = d;
     }
 
-    virtual double intersect(Ray *r, double *color, int level)
+    virtual double intersect(Ray r, double *color, int level)
     {
         return -1.0;
     }
@@ -176,6 +187,23 @@ public:
         // return closest
         return min(t1, t2);
     }
+
+    double intersect(Ray r, double *clr, int level)
+    {
+        double t = get_t(r);
+
+        if (t < 1 || t > 1000)
+            return -1;
+
+        if (level == 0)
+            return t;
+
+        //  Adding Ambient light
+        for (int i = 0; i < 3; i++)
+            clr[i] = color[i] * coEfficients[0];
+
+        // TODO: onek kaj korte hobe
+    }
 };
 
 class Triangle : public Object
@@ -199,6 +227,49 @@ public:
         glVertex3f(p2.x, p2.y, p2.z);
         glVertex3f(p3.x, p3.y, p3.z);
         glEnd();
+    }
+
+    double get_t(Ray ray)
+    {
+        // From wikipedia - Möller–Trumbore intersection algorithm
+
+        Point line_1, line_2;
+        line_1 = p2 - p1;
+        line_2 = p3 - p1;
+
+        Point h = Cross_product(ray.dir, line_2);
+
+        double check = Dot_product(h, line_1);
+
+        // Checking if parallel
+        if (check > -0.0000001 && check < 0.0000001)
+            return -1;
+
+        double f = 1.0 / check;
+        Point s = ray.start - p1;
+        double u = f * Dot_product(s, h);
+
+        if (u < 0.0 || u > 1.0)
+            return -1;
+
+        Point q = Cross_product(s, line_1);
+        double v = f * Dot_product(ray.dir, q);
+
+        if (v < 0.0 || u + v > 1.0)
+            return -1;
+
+        float t = f * Dot_product(line_2, q);
+
+        if (t > 0.0000001) // ray intersection
+            return t;
+        else // This means that there is a line intersection but not a ray intersection.
+            return -1;
+    }
+
+    double intersect(Ray r, double *clr, int level)
+    {
+
+        return 0.0;
     }
 };
 
