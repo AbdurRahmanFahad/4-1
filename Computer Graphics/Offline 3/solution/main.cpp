@@ -90,8 +90,47 @@ void Capture()
             curPixel = topleft + temp;
             temp = uu * (j * dv);
             curPixel = curPixel - temp;
+
+            Ray cast_ray(eye, curPixel - eye);
+
+            nearest = -1;
+            tMin = 1000;
+
+            for (int k = 0; k < objects.size(); k++)
+            {
+                //level 0  to know the nearest object
+                t = objects[k]->intersect(cast_ray, dummy_color, 0);
+
+                if (t > 0 && t < tMin)
+                    tMin = t, nearest = k;
+            }
+
+            if (nearest != -1)
+            {
+                //t = objects[nearest]->intersect(ray, dummy_color, 1);
+                dummy_color = objects[nearest]->color;
+
+                for (int c = 0; c < 3; c++)
+                {
+                    // keeping values between 0 and 1
+                    if (dummy_color[c] < 0.0)
+                        dummy_color[c] = 0.0;
+
+                    else if (dummy_color[c] > 1.0)
+                        dummy_color[c] = 1.0;
+                }
+            }
+            else
+                dummy_color[0] = dummy_color[1] = dummy_color[2] = 0.0;
+
+            image.set_pixel(i, j, 255 * dummy_color[0], 255 * dummy_color[1], 255 * dummy_color[2]);
         }
     }
+
+    image.save_image("image.bmp");
+    image.clear();
+
+    cout << "Capture()" << endl;
 }
 
 void keyboardListener(unsigned char key, int x, int y)
@@ -158,7 +197,9 @@ void keyboardListener(unsigned char key, int x, int y)
         r = normalize(r);
     }
     break;
-
+    case '0':
+        Capture();
+        break;
     default:
         break;
     }
