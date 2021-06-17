@@ -336,6 +336,7 @@ class Floor : public Object
 {
 public:
     int no_tiles;
+    int floor_width;
 
     Floor() {}
 
@@ -344,6 +345,7 @@ public:
         reference_point = Point(-floorWidth / 2, -floorWidth / 2, 0);
         length = tileWidth;
         no_tiles = floorWidth / tileWidth;
+        floor_width = floorWidth;
     }
 
     void draw()
@@ -371,6 +373,25 @@ public:
         glEnd();
     }
 
+    void set_floor_color(Point p)
+    {
+        Point dist = p - reference_point;
+
+        // if outside checker board then black
+        if (dist.x < 0 || dist.x > floor_width || dist.y < 0 || dist.y > floor_width)
+        {
+            for (int c = 0; c < 3; c++)
+                color[c] = 0.0;
+            return;
+        }
+        int tileX = (dist.x / length);
+        int tileY = (dist.y / length);
+
+        // Determining white or black
+        for (int c = 0; c < 3; c++)
+            color[c] = (tileX + tileY) % 2;
+    }
+
     double get_t(Ray ray)
     {
         // checking if ray is parallel to floor (xy plane)
@@ -379,7 +400,10 @@ public:
 
         double t = (-ray.start.z / ray.dir.z);
 
-        //Point intersectionPoint = ray.start + Point( ray.dir* t);
+        Point temp = ray.dir * t;
+        Point intersectionPoint = ray.start + temp;
+
+        set_floor_color(intersectionPoint);
 
         return t;
     }
