@@ -269,7 +269,19 @@ public:
     double intersect(Ray r, double *clr, int level)
     {
 
-        return 0.0;
+        double t = get_t(r);
+
+        if (t < 1 || t > 1000)
+            return -1;
+
+        if (level == 0)
+            return t;
+
+        //  Adding Ambient light
+        for (int i = 0; i < 3; i++)
+            clr[i] = color[i] * coEfficients[0];
+
+        // intersection point  (R0 + t * Rd)
     }
 };
 
@@ -296,6 +308,26 @@ public:
     void draw()
     {
         //cout << "Drawing General" << endl;
+    }
+
+    double get_t(Ray ray)
+    {
+        return -1;
+    }
+
+    double intersect(Ray r, double *clr, int level)
+    {
+        double t = get_t(r);
+
+        if (t < 1 || t > 1000)
+            return -1;
+
+        if (level == 0)
+            return t;
+
+        //  Adding Ambient light
+        for (int i = 0; i < 3; i++)
+            clr[i] = color[i] * coEfficients[0];
     }
 };
 
@@ -336,5 +368,33 @@ public:
             }
         }
         glEnd();
+    }
+
+    double get_t(Ray ray)
+    {
+        // checking if ray is parallel to floor (xy plane)
+        if (ray.dir.z == 0)
+            return -1;
+
+        double t = (-ray.start.z / ray.dir.z);
+
+        //Point intersectionPoint = ray.start + Point( ray.dir* t);
+
+        return t;
+    }
+
+    double intersect(Ray r, double *clr, int level)
+    {
+        double t = get_t(r);
+
+        if (t < 1 || t > 1000)
+            return -1;
+
+        if (level == 0)
+            return t;
+
+        //  Adding Ambient light
+        for (int i = 0; i < 3; i++)
+            clr[i] = color[i] * coEfficients[0];
     }
 };
