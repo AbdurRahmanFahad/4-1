@@ -80,7 +80,7 @@ void Capture()
     int nearest;
     double t, tMin;
     Point curPixel;
-    double *dummy_color = new double[3];
+    double dummy_color[3]; //= new double[3];
 
     for (int i = 0; i < pixels; i++)
     {
@@ -108,10 +108,10 @@ void Capture()
             if (nearest != -1)
             {
                 //t = objects[nearest]->intersect(ray, dummy_color, 1);
-                dummy_color = objects[nearest]->color;
 
                 for (int c = 0; c < 3; c++)
                 {
+                    dummy_color[c] = objects[nearest]->color[c];
                     // keeping values between 0 and 1
                     if (dummy_color[c] < 0.0)
                         dummy_color[c] = 0.0;

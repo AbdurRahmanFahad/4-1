@@ -4,22 +4,6 @@
 
 using namespace std;
 
-double Dot_product(Point a, Point b)
-{
-    return a.x * b.x + a.y * b.y + a.z * b.z;
-}
-
-Point Cross_product(Point v1, Point v2)
-{
-    Point res;
-
-    res.x = v1.y * v2.z - v1.z * v2.y;
-    res.y = v1.z * v2.x - v1.x * v2.z;
-    res.z = v1.x * v2.y - v1.y * v2.x;
-
-    return res;
-};
-
 class Point
 {
 public:
@@ -65,6 +49,22 @@ public:
         os << p.x << " " << p.y << " " << p.z << endl;
         return os;
     }
+};
+
+double Dot_product(Point a, Point b)
+{
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+Point Cross_product(Point v1, Point v2)
+{
+    Point res;
+
+    res.x = v1.y * v2.z - v1.z * v2.y;
+    res.y = v1.z * v2.x - v1.x * v2.z;
+    res.z = v1.x * v2.y - v1.y * v2.x;
+
+    return res;
 };
 
 class Light
@@ -178,9 +178,10 @@ public:
 
         d = b * b - 4 * a * c;
 
-        if (d <= 0) // imaginary value or tangent
+        if (d < 0) // imaginary value
             return -1;
 
+        d = sqrt(d);
         t1 = (-b + d) / (2 * a);
         t2 = (-b - d) / (2 * a);
 
