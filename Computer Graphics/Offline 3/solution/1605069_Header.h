@@ -178,6 +178,9 @@ public:
 
         d = b * b - 4 * a * c;
 
+        if (a == 0)
+            return -c / b;
+
         if (d < 0) // imaginary value
             return -1;
 
@@ -313,7 +316,34 @@ public:
 
     double get_t(Ray ray)
     {
-        return -1;
+        //return -1;
+        double Aq, Bq, Cq;
+        Point R0 = ray.start, Rd = ray.dir;
+        // - reference
+        double xo = R0.x, yo = R0.y, zo = R0.z;
+        double xd = Rd.x, yd = Rd.y, zd = Rd.z;
+
+        Aq = A * xd * xd + B * yd * yd + C * zd * zd;
+        Aq += D * xd * yd + E * xd * zd + F * yd * zd;
+        Bq = 2 * A * xo * xd + 2 * B * yo * yd + 2 * C * zo * zd;
+        Bq += D * (xo * yd + yo * xd) + E * (xo * zd + zo * xd) + F * (yo * zd + yd * zo) + G * xd + H * yd + I * zd;
+        Cq = A * xo * xo + B * yo * yo + C * zo * zo + D * xo * yo + E * xo * zo + F * yo * zo + G * xo + H * yo + I * zo + J;
+
+        double t1, t2, dd;
+        dd = Bq * Bq - 4 * Aq * Cq;
+
+        if (Aq == 0)
+            return -Cq / Bq;
+
+        if (dd < 0)
+            return -1;
+
+        dd = sqrt(dd);
+
+        t1 = (-Bq - dd) / (2 * Aq);
+        t2 = (-Bq + dd) / (2 * Aq);
+
+        return min(t1, t2);
     }
 
     double intersect(Ray r, double *clr, int level)
@@ -380,16 +410,15 @@ public:
         // if outside checker board then black
         if (dist.x < 0 || dist.x > floor_width || dist.y < 0 || dist.y > floor_width)
         {
-            for (int c = 0; c < 3; c++)
-                color[c] = 0.0;
+            color[0] = color[1] = color[2] = 0.0;
             return;
         }
-        int tileX = (dist.x / length);
-        int tileY = (dist.y / length);
 
-        // Determining white or black
-        for (int c = 0; c < 3; c++)
-            color[c] = (tileX + tileY) % 2;
+        int tile_x = (dist.x / length);
+        int tile_y = (dist.y / length);
+
+        // Determining white or black (1 or 0)
+        color[0] = color[1] = color[2] = (tile_x + tile_y) % 2;
     }
 
     double get_t(Ray ray)
@@ -401,9 +430,9 @@ public:
         double t = (-ray.start.z / ray.dir.z);
 
         Point temp = ray.dir * t;
-        Point intersectionPoint = ray.start + temp;
+        Point intersection_point = ray.start + temp;
 
-        set_floor_color(intersectionPoint);
+        set_floor_color(intersection_point);
 
         return t;
     }
