@@ -38,6 +38,12 @@ public:
         return res;
     }
 
+    void Normalize()
+    {
+        double modulas = sqrt(x * x + y * y + z * z);
+        x = x / modulas, y = y / modulas, z = z / modulas;
+    }
+
     friend ostream &operator<<(ostream &os, Point &p)
     {
         os << p.x << " " << p.y << " " << p.z << endl;
@@ -71,7 +77,14 @@ class Ray
 {
 public:
     Point start, dir;
+
     Ray() {}
+
+    Ray(Point source, Point direction)
+    {
+        start = source, dir = direction;
+        dir.Normalize();
+    }
 };
 
 class Object
