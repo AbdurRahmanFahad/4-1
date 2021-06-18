@@ -95,7 +95,7 @@ void Capture()
             Ray cast_ray(eye, curPixel - eye);
 
             nearest = -1;
-            tMin = 1000;
+            tMin = 10000;
 
             for (int k = 0; k < objects.size(); k++)
             {
@@ -421,12 +421,16 @@ void loadData()
         lights.push_back(l);
     }
 
+    // Light Sources Input ********
+
     // Floor ***********************
 
     temp = new Floor(500, 20);
     temp->object_id = total_objects;
     objects.push_back(temp);
     total_objects++;
+
+    // Floor ***********************
 }
 
 void free_memory()

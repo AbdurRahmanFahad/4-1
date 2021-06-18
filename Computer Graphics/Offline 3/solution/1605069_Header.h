@@ -76,6 +76,7 @@ public:
     Point light_pos;
     double color[3];
     Light(){};
+
     Light(Point pos, double r, double g, double b)
     {
         color[0] = r, color[1] = g, color[2] = b;
@@ -149,12 +150,8 @@ public:
 
     Object() {}
 
-    Object(Object *o)
-    {
-        *this = o;
-    }
-
     virtual void draw() {}
+
     void setColor(double r, double g, double b)
     {
         color[0] = r, color[1] = g, color[2] = b;
@@ -164,6 +161,7 @@ public:
     {
         shine = s;
     }
+
     void setCoEfficients(double a, double b, double c, double d)
     {
         coEfficients[0] = a,
@@ -196,8 +194,7 @@ void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *c
         Point L = lights[i].light_pos - intersection_point;
         L.Normalize();
 
-        Point temp = L * 0.0000001;
-        Point start = intersection_point + temp;
+        Point start = intersection_point + L;
         Ray sunLight(start, L);
 
         Point N = normal;
@@ -225,10 +222,13 @@ void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *c
             double cosPhi = max(0.0, Dot_product(R, V));
 
             double lambart = objects[id]->coEfficients[1] * cosTheta;
-            double phong = pow(cosPhi, objects[id]->coEfficients[2]) * objects[id]->coEfficients[2];
+            double phong = pow(cosPhi, objects[id]->shine);
 
+            // calculate phongValue using r, rayr
+            // color += l.color * coEfficient[DIFF] *lambertValue *intersectionPointColor
+            // color += l.color * coEfficient[SPEC] * phongValue^shine * intersectionPointColor
             for (int c = 0; c < 3; c++)
-                clr[c] += (lambart * objects[id]->color[c]) + (phong * 1.0);
+                clr[c] += (lambart + phong) * lights[i].color[c] * objects[id]->color[c];
         }
     }
 
@@ -275,6 +275,7 @@ class Sphere : public Object
 {
 public:
     Sphere() {}
+
     Sphere(Point center, double radius)
     {
         reference_point = center;
@@ -622,7 +623,7 @@ public:
         length = tileWidth;
         no_tiles = floorWidth / tileWidth;
         floor_width = floorWidth;
-        coEfficients[0] = 0.4;
+        coEfficients[0] = 0.2;
         coEfficients[1] = 0.2;
         coEfficients[2] = 0.2;
         coEfficients[3] = 0.2;
