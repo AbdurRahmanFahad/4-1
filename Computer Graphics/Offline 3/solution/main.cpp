@@ -15,6 +15,7 @@ struct point
 };
 
 // Variables for camera
+
 struct point pos = {100, 100, 60};
 struct point u = {0, 0, 1};
 struct point r = {-1 / sqrt(2), 1 / sqrt(2), 0};
@@ -25,7 +26,8 @@ struct point l = {-1 / sqrt(2), -1 / sqrt(2), 0};
 vector<Object *> objects;
 vector<Light> lights;
 
-// Global Variables
+// Global Variables ***********************************
+
 int recursion_level, pixels, total_objects, total_light_sources;
 
 struct point cross_product(struct point v1, struct point v2)
@@ -49,6 +51,8 @@ struct point normalize(struct point v)
 
     return res;
 };
+
+// Capture Function ***********************************
 
 void Capture()
 {
@@ -133,6 +137,8 @@ void Capture()
 
     cout << "Capture()" << endl;
 }
+
+// Capture Function ***********************************
 
 void keyboardListener(unsigned char key, int x, int y)
 {
@@ -249,23 +255,6 @@ void specialKeyListener(int key, int x, int y)
     }
 }
 
-void mouseListener(int button, int state, int x, int y)
-{
-    switch (button)
-    {
-    case GLUT_LEFT_BUTTON:
-
-        break;
-
-    case GLUT_RIGHT_BUTTON:
-
-        break;
-
-    default:
-        break;
-    }
-}
-
 void draw_all()
 {
     for (int i = 0; i < total_objects; i++)
@@ -306,7 +295,6 @@ void animate()
 
 void init()
 {
-    //codes for initialization
 
     glClearColor(0, 0, 0, 0);
 
@@ -314,6 +302,7 @@ void init()
 
     glLoadIdentity();
 
+    // Fov - Field of View 80 degrees
     gluPerspective(80, 1, 1, 1000.0);
 }
 
@@ -383,7 +372,6 @@ void loadData()
         else if (s == "general")
         {
             // Input
-
             double A, B, C, D, E, F, G, H, I, J;
             cin >> A >> B >> C >> D >> E >> F >> G >> H >> I >> J;
             double x, y, z, length, width, height;
@@ -468,7 +456,6 @@ int main(int argc, char **argv)
 
     glutKeyboardFunc(keyboardListener);
     glutSpecialFunc(specialKeyListener);
-    glutMouseFunc(mouseListener);
 
     glutMainLoop(); //The main loop of OpenGL
 

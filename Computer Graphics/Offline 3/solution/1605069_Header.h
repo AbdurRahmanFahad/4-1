@@ -1,10 +1,7 @@
-#ifndef __1605069_Header_h__
-#define __1605069_Header_h__
-
 #include <bits/stdc++.h>
 #include <windows.h>
 #include <glut.h>
-//#include "main.cpp"
+
 using namespace std;
 
 class Point
@@ -17,7 +14,7 @@ public:
         x = y = z = 0.0;
     }
 
-    Point(float a, float b, float c)
+    Point(double a, double b, double c)
     {
         x = a, y = b, z = c;
     }
@@ -59,13 +56,13 @@ double Dot_product(Point a, Point b)
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-Point Cross_product(Point v1, Point v2)
+Point Cross_product(Point a, Point b)
 {
     Point res;
 
-    res.x = v1.y * v2.z - v1.z * v2.y;
-    res.y = v1.z * v2.x - v1.x * v2.z;
-    res.z = v1.x * v2.y - v1.y * v2.x;
+    res.x = a.y * b.z - a.z * b.y;
+    res.y = a.z * b.x - a.x * b.z;
+    res.z = a.x * b.y - a.y * b.x;
 
     return res;
 };
@@ -107,10 +104,11 @@ public:
     }
 };
 
-Point get_intersection_point(Ray ray, double t1)
+Point get_intersection_point(Ray ray, double t)
 {
+    // P(t) = R0 + t*Rd
     Point Rd = ray.dir, R0 = ray.start;
-    Point temp = Rd * t1;
+    Point temp = Rd * t;
     Point ans = R0 + temp;
 
     return ans;
@@ -118,24 +116,24 @@ Point get_intersection_point(Ray ray, double t1)
 
 Point get_reflected_vector(Point incident_ray, Point normal)
 {
-    double k = Dot_product(incident_ray, normal) * 2;
+    //r=d−2(d⋅n)n, d is incident ray, n is normal
+
+    double k = 2 * Dot_product(incident_ray, normal);
     Point temp = normal * k;
+    Point reflected = incident_ray - temp;
+    reflected.Normalize();
 
-    Point reflected_ray = incident_ray - temp;
-    reflected_ray.Normalize();
-
-    return reflected_ray;
+    return reflected;
 }
 
-Point getRevReflection(Point original_vec, Point normal)
+Point get_reverse_reflection(Point incident_ray, Point normal)
 {
-    double coeff = Dot_product(original_vec, normal) * 2;
-    Point temp = normal * coeff;
-    Point reflected_vec = temp - original_vec;
+    double k = 2 * Dot_product(incident_ray, normal);
+    Point temp = normal * k;
+    Point reflected = temp - incident_ray; // r = 2(d⋅n)n - d
+    reflected.Normalize();
 
-    reflected_vec.Normalize();
-
-    return reflected_vec;
+    return reflected;
 }
 
 class Object
@@ -198,7 +196,7 @@ void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *c
         Ray sunLight(start, L);
 
         Point N = normal;
-        Point R = getRevReflection(L, N);
+        Point R = get_reverse_reflection(L, N);
 
         Point V = r.start - intersection_point;
         V.Normalize();
@@ -284,7 +282,6 @@ public:
 
     Point getNormal(Point x, Point y)
     {
-        //normal in that point is (P - C)
         Point temp = x - y;
         temp.Normalize();
 
@@ -339,21 +336,21 @@ public:
     {
         double t = get_t(r);
 
-        if (t < 1 || t > 1000)
+        if (t < 1 || t > 10000)
             return -1;
 
         if (level == 0)
             return t;
-
-        //  Adding Ambient light
-        for (int i = 0; i < 3; i++)
-            clr[i] = color[i] * coEfficients[0];
 
         Point intersection_point = get_intersection_point(r, t);
         Point normal = getNormal(intersection_point, reference_point);
         Point reflected_vector = get_reflected_vector(r.dir, normal);
 
         // Illumination ***********************************
+
+        //  Adding Ambient light
+        for (int i = 0; i < 3; i++)
+            clr[i] = color[i] * coEfficients[0];
 
         Illuminati(intersection_point, normal, r, object_id, clr);
 
@@ -383,7 +380,7 @@ public:
 
     Point getNormal()
     {
-        // (b - a) * (c - a);
+        // (b - a) x (c - a);
         Point temp = Cross_product(p2 - p1, p3 - p1);
         temp.Normalize();
 
@@ -443,23 +440,21 @@ public:
 
         double t = get_t(r);
 
-        if (t < 1 || t > 1000)
+        if (t < 1 || t > 10000)
             return -1;
 
         if (level == 0)
             return t;
-
-        //  Adding Ambient light
-        for (int i = 0; i < 3; i++)
-            clr[i] = color[i] * coEfficients[0];
-
-        // intersection point  (R0 + t * Rd)
 
         Point intersection_point = get_intersection_point(r, t);
         Point normal = getNormal();
         Point reflected_vector = get_reflected_vector(r.dir, normal);
 
         // Illumination ***********************************
+
+        //  Adding Ambient light
+        for (int i = 0; i < 3; i++)
+            clr[i] = color[i] * coEfficients[0];
 
         Illuminati(intersection_point, normal, r, object_id, clr);
 
@@ -548,6 +543,7 @@ public:
         t2 = (-Bq + dd) / (2 * Aq);
 
         // Testing ***************************
+
         Point temp = Rd * t1;
         Point ans1 = R0 + temp;
 
@@ -579,21 +575,21 @@ public:
     {
         double t = get_t(r);
 
-        if (t < 1 || t > 1000)
+        if (t < 1 || t > 10000)
             return -1;
 
         if (level == 0)
             return t;
-
-        //  Adding Ambient light
-        for (int i = 0; i < 3; i++)
-            clr[i] = color[i] * coEfficients[0];
 
         Point intersection_point = get_intersection_point(r, t);
         Point normal = getNormal(intersection_point);
         Point reflected_vector = get_reflected_vector(r.dir, normal);
 
         // Illumination ***********************************
+
+        //  Adding Ambient light
+        for (int i = 0; i < 3; i++)
+            clr[i] = color[i] * coEfficients[0];
 
         Illuminati(intersection_point, normal, r, object_id, clr);
 
@@ -693,21 +689,21 @@ public:
     {
         double t = get_t(r);
 
-        if (t < 1 || t > 1000)
+        if (t < 1 || t > 10000)
             return -1;
 
         if (level == 0)
             return t;
-
-        //  Adding Ambient light
-        for (int i = 0; i < 3; i++)
-            clr[i] = color[i] * coEfficients[0];
 
         Point intersection_point = get_intersection_point(r, t);
         Point normal(0, 0, 1);
         Point reflected_vector = get_reflected_vector(r.dir, normal);
 
         // Illumination ***********************************
+
+        //  Adding Ambient light
+        for (int i = 0; i < 3; i++)
+            clr[i] = color[i] * coEfficients[0];
 
         Illuminati(intersection_point, normal, r, object_id, clr);
 
@@ -722,5 +718,3 @@ public:
         return t;
     }
 };
-
-#endif
