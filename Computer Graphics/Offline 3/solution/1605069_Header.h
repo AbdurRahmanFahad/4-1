@@ -345,12 +345,32 @@ public:
         t1 = (-Bq - dd) / (2 * Aq);
         t2 = (-Bq + dd) / (2 * Aq);
 
-        if (t1 > 0)
-            return t1;
-        else if (t2 > 0)
+        // Testing ***************************
+        Point temp = Rd * t1;
+        Point ans1 = R0 + temp;
+
+        temp = Rd * t2;
+        Point ans2 = R0 + temp;
+
+        if (ans2.z < 15 && ans1.z < 15)
+            return min(t1, t2);
+        else if (ans2.z < 15)
             return t2;
+        else if (ans1.z < 15)
+            return t1;
         else
             return -1;
+
+        // Testing ***************************
+
+        // if (t1 > 0)
+        //     return t1;
+        // else if (t2 > 0)
+        //     return t2;
+        // else
+        //     return -1;
+
+        //return min(t1, t2);
     }
 
     double intersect(Ray r, double *clr, int level)
