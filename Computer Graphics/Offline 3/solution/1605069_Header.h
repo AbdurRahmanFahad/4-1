@@ -145,8 +145,14 @@ public:
     double color[3];
     double coEfficients[4]; // reflection coefficients
     int shine;
+    int object_id;
 
     Object() {}
+
+    Object(Object *o)
+    {
+        *this = o;
+    }
 
     virtual void draw() {}
     void setColor(double r, double g, double b)
@@ -179,6 +185,55 @@ public:
 
 extern vector<Object *> objects;
 extern vector<Light> lights;
+extern int recursion_level;
+
+void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *clr)
+{
+    // Illumination ***********************************
+
+    for (int i = 0; i < lights.size(); i++)
+    {
+        Point L = lights[i].light_pos - intersection_point;
+        L.Normalize();
+
+        Point temp = L * 0.0000001;
+        Point start = intersection_point + temp;
+        Ray sunLight(start, L);
+
+        Point N = normal;
+        Point R = getRevReflection(L, N);
+
+        Point V = r.start - intersection_point;
+        V.Normalize();
+
+        //check if obscured
+        bool obscured = false;
+        for (int j = 0; j < objects.size(); j++)
+        {
+            double temp = objects[j]->get_t(sunLight);
+
+            if (temp > 0)
+            {
+                obscured = true;
+                break;
+            }
+        }
+
+        if (!obscured)
+        {
+            double cosTheta = max(0.0, Dot_product(L, N));
+            double cosPhi = max(0.0, Dot_product(R, V));
+
+            double lambart = objects[id]->coEfficients[1] * cosTheta;
+            double phong = pow(cosPhi, objects[id]->coEfficients[2]) * objects[id]->coEfficients[2];
+
+            for (int c = 0; c < 3; c++)
+                clr[c] += (lambart * objects[id]->color[c]) + (phong * 1.0);
+        }
+    }
+
+    // Illumination ***********************************
+}
 
 class Sphere : public Object
 {
@@ -356,6 +411,15 @@ public:
         p1 = a, p2 = b, p3 = c;
     }
 
+    Point getNormal()
+    {
+        // (b - a) * (c - a);
+        Point temp = Cross_product(p2 - p1, p3 - p1);
+        temp.Normalize();
+
+        return temp;
+    }
+
     void draw()
     {
         //cout << "Drawing Triangle" << endl;
@@ -420,6 +484,89 @@ public:
             clr[i] = color[i] * coEfficients[0];
 
         // intersection point  (R0 + t * Rd)
+
+        Point intersection_point = get_intersection_point(r, t);
+        Point normal = getNormal();
+        Point reflected_vector = get_reflected_vector(r.dir, normal);
+
+        // Illumination ***********************************
+        for (int i = 0; i < lights.size(); i++)
+        {
+            Point L = lights[i].light_pos - intersection_point;
+            L.Normalize();
+
+            Point temp = L * 0.0000001;
+            Point start = intersection_point + temp;
+            Ray sunLight(start, L);
+
+            Point N = normal;
+            Point R = getRevReflection(L, N);
+
+            Point V = r.start - intersection_point;
+            V.Normalize();
+
+            //check if obscured
+            bool obscured = false;
+            for (int j = 0; j < objects.size(); j++)
+            {
+                double temp = objects[j]->get_t(sunLight);
+
+                if (temp > 0)
+                {
+                    obscured = true;
+                    break;
+                }
+            }
+
+            if (!obscured)
+            {
+                double cosTheta = max(0.0, Dot_product(L, N));
+                double cosPhi = max(0.0, Dot_product(R, V));
+
+                double lambart = coEfficients[1] * cosTheta;
+                double phong = pow(cosPhi, coEfficients[2]) * coEfficients[2];
+
+                for (int c = 0; c < 3; c++)
+                    clr[c] += (lambart * color[c]) + (phong * 1.0);
+            }
+        }
+
+        // Illumination ***********************************
+
+        int nearest, t_min, t2;
+
+        //Reflection
+        if (level < 4)
+        {
+            Point start = intersection_point + reflected_vector;
+            Ray reflected_ray(start, reflected_vector);
+
+            nearest = -1;
+            t_min = 10000;
+
+            double *reflected_color = new double[3];
+            reflected_color[0] = reflected_color[1] = reflected_color[2] = 0.0;
+
+            for (int k = 0; k < objects.size(); k++)
+            {
+                t2 = objects[k]->intersect(reflected_ray, reflected_color, 0);
+
+                if (t2 > 0 && t2 < t_min)
+                    t_min = t2, nearest = k;
+            }
+
+            if (nearest != -1)
+            {
+                t2 = objects[nearest]->intersect(reflected_ray, reflected_color, level + 1);
+
+                for (int c = 0; c < 3; c++)
+                    clr[c] += (reflected_color[c] * coEfficients[3]);
+            }
+
+            delete[] reflected_color;
+        }
+
+        return t;
     }
 };
 
@@ -441,6 +588,15 @@ public:
     {
         A = a, B = b, C = c, D = d, E = e, F = f;
         G = g, H = h, I = i, J = j;
+    }
+
+    Point getNormal()
+    {
+        // (b - a) * (c - a);
+        Point temp = {1, 1, 1};
+        temp.Normalize();
+
+        return temp;
     }
 
     void draw()
@@ -520,6 +676,89 @@ public:
         //  Adding Ambient light
         for (int i = 0; i < 3; i++)
             clr[i] = color[i] * coEfficients[0];
+
+        Point intersection_point = get_intersection_point(r, t);
+        Point normal(0, 0, 1);
+        Point reflected_vector = get_reflected_vector(r.dir, normal);
+
+        // Illumination ***********************************
+        for (int i = 0; i < lights.size(); i++)
+        {
+            Point L = lights[i].light_pos - intersection_point;
+            L.Normalize();
+
+            Point temp = L * 0.0000001;
+            Point start = intersection_point + temp;
+            Ray sunLight(start, L);
+
+            Point N = normal;
+            Point R = getRevReflection(L, N);
+
+            Point V = r.start - intersection_point;
+            V.Normalize();
+
+            //check if obscured
+            bool obscured = false;
+            for (int j = 0; j < objects.size(); j++)
+            {
+                double temp = objects[j]->get_t(sunLight);
+
+                if (temp > 0)
+                {
+                    obscured = true;
+                    break;
+                }
+            }
+
+            if (!obscured)
+            {
+                double cosTheta = max(0.0, Dot_product(L, N));
+                double cosPhi = max(0.0, Dot_product(R, V));
+
+                double lambart = coEfficients[1] * cosTheta;
+                double phong = pow(cosPhi, coEfficients[2]) * coEfficients[2];
+
+                for (int c = 0; c < 3; c++)
+                    clr[c] += (lambart * color[c]) + (phong * 1.0);
+            }
+        }
+
+        // Illumination ***********************************
+
+        int nearest, t_min, t2;
+
+        //Reflection
+        if (level < 4)
+        {
+            Point start = intersection_point + reflected_vector;
+            Ray reflected_ray(start, reflected_vector);
+
+            nearest = -1;
+            t_min = 10000;
+
+            double *reflected_color = new double[3];
+            reflected_color[0] = reflected_color[1] = reflected_color[2] = 0.0;
+
+            for (int k = 0; k < objects.size(); k++)
+            {
+                t2 = objects[k]->intersect(reflected_ray, reflected_color, 0);
+
+                if (t2 > 0 && t2 < t_min)
+                    t_min = t2, nearest = k;
+            }
+
+            if (nearest != -1)
+            {
+                t2 = objects[nearest]->intersect(reflected_ray, reflected_color, level + 1);
+
+                for (int c = 0; c < 3; c++)
+                    clr[c] += (reflected_color[c] * coEfficients[3]);
+            }
+
+            delete[] reflected_color;
+        }
+
+        return t;
     }
 };
 
@@ -622,48 +861,7 @@ public:
         Point reflected_vector = get_reflected_vector(r.dir, normal);
 
         // Illumination ***********************************
-        for (int i = 0; i < lights.size(); i++)
-        {
-            Point L = lights[i].light_pos - intersection_point;
-            L.Normalize();
-
-            Point temp = L * 0.0000001;
-            Point start = intersection_point + temp;
-            Ray sunLight(start, L);
-
-            Point N = normal;
-            Point R = getRevReflection(L, N);
-
-            Point V = r.start - intersection_point;
-            V.Normalize();
-
-            //check if obscured
-            bool obscured = false;
-            for (int j = 0; j < objects.size(); j++)
-            {
-                double temp = objects[j]->get_t(sunLight);
-
-                if (temp > 0)
-                {
-                    obscured = true;
-                    break;
-                }
-            }
-
-            if (!obscured)
-            {
-                double cosTheta = max(0.0, Dot_product(L, N));
-                double cosPhi = max(0.0, Dot_product(R, V));
-
-                double lambart = coEfficients[1] * cosTheta;
-                double phong = pow(cosPhi, coEfficients[2]) * coEfficients[2];
-
-                for (int c = 0; c < 3; c++)
-                    clr[c] += (lambart * color[c]) + (phong * 1.0);
-            }
-        }
-
-        // Illumination ***********************************
+        Illuminati(intersection_point, normal, r, object_id, clr);
 
         int nearest, t_min, t2;
 

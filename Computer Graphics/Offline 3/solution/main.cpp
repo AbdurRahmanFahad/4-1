@@ -350,6 +350,7 @@ void loadData()
             temp->setColor(r, g, b);
             temp->setShine(shininess);
             temp->setCoEfficients(ambient, diffuse, specular, recursive_reflection_coefficient);
+            temp->object_id = i;
             objects.push_back(temp);
         }
         else if (s == "triangle")
@@ -376,6 +377,7 @@ void loadData()
             temp->setColor(r, g, b);
             temp->setShine(shininess);
             temp->setCoEfficients(ambient, diffuse, specular, recursive_reflection_coefficient);
+            temp->object_id = i;
             objects.push_back(temp);
         }
         else if (s == "general")
@@ -401,6 +403,7 @@ void loadData()
             temp1->setColor(r, g, b);
             temp1->setShine(shininess);
             temp1->setCoEfficients(ambient, diffuse, specular, recursive_reflection_coefficient);
+            temp->object_id = i;
             objects.push_back(temp1);
         }
     }
@@ -421,9 +424,7 @@ void loadData()
     // Floor ***********************
 
     temp = new Floor(500, 20);
-    // set color
-    // set coEfficients
-    // set shine
+    temp->object_id = total_objects;
     objects.push_back(temp);
     total_objects++;
 }
