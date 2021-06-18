@@ -126,6 +126,17 @@ Point get_reflected_vector(Point incident_ray, Point normal)
     return reflected_ray;
 }
 
+Point getRevReflection(Point original_vec, Point normal)
+{
+    double coeff = Dot_product(original_vec, normal) * 2;
+    Point temp = normal * coeff;
+    Point reflected_vec = temp - original_vec;
+
+    reflected_vec.Normalize();
+
+    return reflected_vec;
+}
+
 class Object
 {
 public:
@@ -155,6 +166,11 @@ public:
         coEfficients[3] = d;
     }
 
+    virtual double get_t(Ray r)
+    {
+        return -1;
+    }
+
     virtual double intersect(Ray r, double *color, int level)
     {
         return -1.0;
@@ -162,6 +178,7 @@ public:
 };
 
 extern vector<Object *> objects;
+extern vector<Light> lights;
 
 class Sphere : public Object
 {
@@ -511,6 +528,50 @@ public:
         Point intersection_point = get_intersection_point(r, t);
         Point normal(0, 0, 1);
         Point reflected_vector = get_reflected_vector(r.dir, normal);
+
+        // Illumination ***********************************
+        for (int i = 0; i < lights.size(); i++)
+        {
+            Point L = lights[i].light_pos - intersection_point;
+            L.Normalize();
+
+            Point temp = L * 0.0000001;
+            Point start = intersection_point + temp;
+            Ray sunLight(start, L);
+
+            Point N = normal;
+            Point R = getRevReflection(L, N);
+
+            Point V = r.start - intersection_point;
+            V.Normalize();
+
+            //check if obscured
+            bool obscured = false;
+            for (int j = 0; j < objects.size(); j++)
+            {
+                double temp = objects[j]->get_t(sunLight);
+
+                if (temp > 0)
+                {
+                    obscured = true;
+                    break;
+                }
+            }
+
+            if (!obscured)
+            {
+                double cosTheta = max(0.0, Dot_product(L, N));
+                double cosPhi = max(0.0, Dot_product(R, V));
+
+                double lambart = coEfficients[1] * cosTheta;
+                double phong = pow(cosPhi, coEfficients[2]) * coEfficients[2];
+
+                for (int c = 0; c < 3; c++)
+                    clr[c] += (lambart * color[c]) + (phong * 1.0);
+            }
+        }
+
+        // Illumination ***********************************
 
         int nearest, t_min, t2;
 
