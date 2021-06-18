@@ -326,8 +326,10 @@ public:
         Aq = A * xd * xd + B * yd * yd + C * zd * zd;
         Aq += D * xd * yd + E * xd * zd + F * yd * zd;
         Bq = 2 * A * xo * xd + 2 * B * yo * yd + 2 * C * zo * zd;
-        Bq += D * (xo * yd + yo * xd) + E * (xo * zd + zo * xd) + F * (yo * zd + yd * zo) + G * xd + H * yd + I * zd;
-        Cq = A * xo * xo + B * yo * yo + C * zo * zo + D * xo * yo + E * xo * zo + F * yo * zo + G * xo + H * yo + I * zo + J;
+        Bq += D * (xo * yd + yo * xd) + E * (xo * zd + zo * xd) + F * (yo * zd + yd * zo);
+        Bq += G * xd + H * yd + I * zd;
+        Cq = A * xo * xo + B * yo * yo + C * zo * zo + D * xo * yo;
+        Cq += E * xo * zo + F * yo * zo + G * xo + H * yo + I * zo + J;
 
         double t1, t2, dd;
         dd = Bq * Bq - 4 * Aq * Cq;
@@ -343,7 +345,12 @@ public:
         t1 = (-Bq - dd) / (2 * Aq);
         t2 = (-Bq + dd) / (2 * Aq);
 
-        return min(t1, t2);
+        if (t1 > 0)
+            return t1;
+        else if (t2 > 0)
+            return t2;
+        else
+            return -1;
     }
 
     double intersect(Ray r, double *clr, int level)
