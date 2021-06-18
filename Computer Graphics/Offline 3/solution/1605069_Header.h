@@ -235,7 +235,7 @@ void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *c
     // Illumination ***********************************
 }
 
-void refletionati(Point intersection_point, Point reflected_vector, int level, int id, double *clr)
+void reflectionati(Point intersection_point, Point reflected_vector, int level, int id, double *clr)
 {
     int nearest, t_min, t2;
 
@@ -358,38 +358,11 @@ public:
 
         // Illumination ***********************************
 
-        int nearest, t_min, t2;
+        //Reflection **************************************
 
-        //Reflection
-        if (level < 4)
-        {
-            Point start = intersection_point + reflected_vector;
-            Ray reflected_ray(start, reflected_vector);
+        reflectionati(intersection_point, reflected_vector, level, object_id, clr);
 
-            nearest = -1;
-            t_min = 10000;
-
-            double *reflected_color = new double[3];
-            reflected_color[0] = reflected_color[1] = reflected_color[2] = 0.0;
-
-            for (int k = 0; k < objects.size(); k++)
-            {
-                t2 = objects[k]->intersect(reflected_ray, reflected_color, 0);
-
-                if (t2 > 0 && t2 < t_min)
-                    t_min = t2, nearest = k;
-            }
-
-            if (nearest != -1)
-            {
-                t2 = objects[nearest]->intersect(reflected_ray, reflected_color, level + 1);
-
-                for (int c = 0; c < 3; c++)
-                    clr[c] += (reflected_color[c] * coEfficients[3]);
-            }
-
-            delete[] reflected_color;
-        }
+        //Reflection **************************************
 
         return t;
     }
@@ -491,38 +464,11 @@ public:
 
         // Illumination ***********************************
 
-        int nearest, t_min, t2;
+        //Reflection **************************************
 
-        //Reflection
-        if (level < 4)
-        {
-            Point start = intersection_point + reflected_vector;
-            Ray reflected_ray(start, reflected_vector);
+        reflectionati(intersection_point, reflected_vector, level, object_id, clr);
 
-            nearest = -1;
-            t_min = 10000;
-
-            double *reflected_color = new double[3];
-            reflected_color[0] = reflected_color[1] = reflected_color[2] = 0.0;
-
-            for (int k = 0; k < objects.size(); k++)
-            {
-                t2 = objects[k]->intersect(reflected_ray, reflected_color, 0);
-
-                if (t2 > 0 && t2 < t_min)
-                    t_min = t2, nearest = k;
-            }
-
-            if (nearest != -1)
-            {
-                t2 = objects[nearest]->intersect(reflected_ray, reflected_color, level + 1);
-
-                for (int c = 0; c < 3; c++)
-                    clr[c] += (reflected_color[c] * coEfficients[3]);
-            }
-
-            delete[] reflected_color;
-        }
+        //Reflection **************************************
 
         return t;
     }
@@ -548,10 +494,17 @@ public:
         G = g, H = h, I = i, J = j;
     }
 
-    Point getNormal()
+    Point getNormal(Point p)
     {
-        // (b - a) * (c - a);
-        Point temp = {1, 1, 1};
+
+        //Normal = (𝜕F/𝜕x, 𝜕F/𝜕y, 𝜕F/𝜕z)
+        //[Substitute x, y, z values with that of intersection
+        //point to obtain normals at different points]
+        double xx = 2 * A * p.x + D * p.y + G;
+        double yy = 2 * B * p.y + F * p.z + H;
+        double zz = 2 * C * p.z + E * p.x + I;
+
+        Point temp(xx, yy, zz);
         temp.Normalize();
 
         return temp;
@@ -636,7 +589,7 @@ public:
             clr[i] = color[i] * coEfficients[0];
 
         Point intersection_point = get_intersection_point(r, t);
-        Point normal(0, 0, 1);
+        Point normal = getNormal(intersection_point);
         Point reflected_vector = get_reflected_vector(r.dir, normal);
 
         // Illumination ***********************************
@@ -645,38 +598,11 @@ public:
 
         // Illumination ***********************************
 
-        int nearest, t_min, t2;
+        //Reflection **************************************
 
-        //Reflection
-        if (level < 4)
-        {
-            Point start = intersection_point + reflected_vector;
-            Ray reflected_ray(start, reflected_vector);
+        reflectionati(intersection_point, reflected_vector, level, object_id, clr);
 
-            nearest = -1;
-            t_min = 10000;
-
-            double *reflected_color = new double[3];
-            reflected_color[0] = reflected_color[1] = reflected_color[2] = 0.0;
-
-            for (int k = 0; k < objects.size(); k++)
-            {
-                t2 = objects[k]->intersect(reflected_ray, reflected_color, 0);
-
-                if (t2 > 0 && t2 < t_min)
-                    t_min = t2, nearest = k;
-            }
-
-            if (nearest != -1)
-            {
-                t2 = objects[nearest]->intersect(reflected_ray, reflected_color, level + 1);
-
-                for (int c = 0; c < 3; c++)
-                    clr[c] += (reflected_color[c] * coEfficients[3]);
-            }
-
-            delete[] reflected_color;
-        }
+        //Reflection **************************************
 
         return t;
     }
@@ -786,13 +712,13 @@ public:
 
         // Illumination ***********************************
 
-        //Reflection
+        //Reflection **************************************
 
-        refletionati(intersection_point, reflected_vector, level, object_id, clr);
+        reflectionati(intersection_point, reflected_vector, level, object_id, clr);
+
+        //Reflection **************************************
 
         return t;
-
-        //******************************************
     }
 };
 
