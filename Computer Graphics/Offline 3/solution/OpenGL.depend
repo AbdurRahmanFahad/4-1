@@ -25,7 +25,7 @@
 	<GL/gl.h>
 	<GL/glu.h>
 
-1624047542 source:d:\4-1\4-1\computer graphics\offline 3\solution\main.cpp
+1624050254 source:d:\4-1\4-1\computer graphics\offline 3\solution\main.cpp
 	<bits/stdc++.h>
 	"bitmap_image.hpp"
 	"1605069_Header.h"
@@ -47,7 +47,7 @@
 	<limits>
 	<string>
 
-1624049271 d:\4-1\4-1\computer graphics\offline 3\solution\1605069_header.h
+1624051246 d:\4-1\4-1\computer graphics\offline 3\solution\1605069_header.h
 	<bits/stdc++.h>
 	<windows.h>
 	<glut.h>
