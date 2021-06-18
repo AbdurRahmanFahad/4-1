@@ -1,7 +1,10 @@
+#ifndef __1605069_Header_h__
+#define __1605069_Header_h__
+
 #include <bits/stdc++.h>
 #include <windows.h>
 #include <glut.h>
-
+//#include "main.cpp"
 using namespace std;
 
 class Point
@@ -103,6 +106,26 @@ public:
     }
 };
 
+Point get_intersection_point(Ray ray, double t1)
+{
+    Point Rd = ray.dir, R0 = ray.start;
+    Point temp = Rd * t1;
+    Point ans = R0 + temp;
+
+    return ans;
+}
+
+Point get_reflected_vector(Point incident_ray, Point normal)
+{
+    double k = Dot_product(incident_ray, normal) * 2;
+    Point temp = normal * k;
+
+    Point reflected_ray = incident_ray - temp;
+    reflected_ray.Normalize();
+
+    return reflected_ray;
+}
+
 class Object
 {
 public:
@@ -137,6 +160,8 @@ public:
         return -1.0;
     }
 };
+
+extern vector<Object *> objects;
 
 class Sphere : public Object
 {
@@ -403,6 +428,11 @@ public:
         length = tileWidth;
         no_tiles = floorWidth / tileWidth;
         floor_width = floorWidth;
+        coEfficients[0] = 0.4;
+        coEfficients[1] = 0.2;
+        coEfficients[2] = 0.2;
+        coEfficients[3] = 0.2;
+        shine = 5;
     }
 
     void draw()
@@ -477,5 +507,48 @@ public:
         //  Adding Ambient light
         for (int i = 0; i < 3; i++)
             clr[i] = color[i] * coEfficients[0];
+
+        Point intersection_point = get_intersection_point(r, t);
+        Point normal(0, 0, 1);
+        Point reflected_vector = get_reflected_vector(r.dir, normal);
+
+        int nearest, t_min, t2;
+
+        //Reflection
+        if (level < 4)
+        {
+            Point start = intersection_point + reflected_vector;
+            Ray reflected_ray(start, reflected_vector);
+
+            nearest = -1;
+            t_min = 10000;
+
+            double *reflected_color = new double[3];
+            reflected_color[0] = reflected_color[1] = reflected_color[2] = 0.0;
+
+            for (int k = 0; k < objects.size(); k++)
+            {
+                t2 = objects[k]->intersect(reflected_ray, reflected_color, 0);
+
+                if (t2 > 0 && t2 < t_min)
+                    t_min = t2, nearest = k;
+            }
+
+            if (nearest != -1)
+            {
+                t2 = objects[nearest]->intersect(reflected_ray, reflected_color, level + 1);
+
+                for (int c = 0; c < 3; c++)
+                    clr[c] += (reflected_color[c] * coEfficients[3]);
+            }
+
+            delete[] reflected_color;
+        }
+
+        return t;
+
+        //******************************************
     }
 };
+
+#endif

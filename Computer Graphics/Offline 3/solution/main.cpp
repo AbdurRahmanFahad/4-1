@@ -23,7 +23,7 @@ struct point l = {-1 / sqrt(2), -1 / sqrt(2), 0};
 // Vectors for objects and light sources
 vector<Object *> objects;
 vector<Light> lights;
-
+//extern objects, lights;
 // Global Variables
 int recursion_level, pixels, total_objects, total_light_sources;
 
@@ -107,11 +107,11 @@ void Capture()
 
             if (nearest != -1)
             {
-                //t = objects[nearest]->intersect(ray, dummy_color, 1);
+                t = objects[nearest]->intersect(cast_ray, dummy_color, 2);
 
                 for (int c = 0; c < 3; c++)
                 {
-                    dummy_color[c] = objects[nearest]->color[c];
+                    // dummy_color[c] = objects[nearest]->color[c];
                     // keeping values between 0 and 1
                     if (dummy_color[c] < 0.0)
                         dummy_color[c] = 0.0;
