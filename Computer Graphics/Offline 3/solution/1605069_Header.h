@@ -181,6 +181,8 @@ void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *c
 {
     // Illumination ***********************************
 
+    // Adding Diffuse, Specular lightings
+
     for (int i = 0; i < lights.size(); i++)
     {
         Point L = lights[i].light_pos - intersection_point;
@@ -342,7 +344,6 @@ public:
 
         // Illumination ***********************************
 
-        //  Adding Ambient light
         for (int i = 0; i < 3; i++)
             clr[i] = color[i] * coEfficients[0];
 
