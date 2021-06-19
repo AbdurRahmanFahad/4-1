@@ -536,33 +536,30 @@ public:
         t1 = (-Bq - dd) / (2 * Aq);
         t2 = (-Bq + dd) / (2 * Aq);
 
+        Point ans1 = R0 + Rd * t1;
+        Point ans2 = R0 + Rd * t2;
+
         // Testing ***************************
 
-        Point temp = Rd * t1;
-        Point ans1 = R0 + temp;
+        bool check_x1 = length > 0 && (ans1.x > reference_point.x + length || ans1.x < reference_point.x);
+        bool check_y1 = width > 0 && (ans1.y > reference_point.y + width || ans1.y < reference_point.y);
+        bool check_z1 = height > 0 && (ans1.z > reference_point.z + height || ans1.z < reference_point.z);
 
-        temp = Rd * t2;
-        Point ans2 = R0 + temp;
+        bool check_x2 = length > 0 && (ans2.x > reference_point.x + length || ans2.x < reference_point.x);
+        bool check_y2 = width > 0 && (ans2.y > reference_point.y + width || ans2.y < reference_point.y);
+        bool check_z2 = height > 0 && (ans2.z > reference_point.z + height || ans2.z < reference_point.z);
 
-        if (ans2.z < 15 && ans1.z < 15)
-            return min(t1, t2);
-        else if (ans2.z < 15)
+        bool check_1 = check_x1 || check_y1 || check_z1;
+        bool check_2 = check_x2 || check_y2 || check_z2;
+
+        if (check_1 && check_2) // both point outside bound
+            return -1;
+        else if (check_1) // Point 1 outside bound, return point 2
             return t2;
-        else if (ans1.z < 15)
+        else if (check_2)
             return t1;
         else
-            return -1;
-
-        // Testing ***************************
-
-        // if (t1 > 0)
-        //     return t1;
-        // else if (t2 > 0)
-        //     return t2;
-        // else
-        //     return -1;
-
-        //return min(t1, t2);
+            return min(t1, t2);
     }
 
     double intersect(Ray r, double *clr, int level)

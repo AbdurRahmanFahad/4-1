@@ -66,15 +66,9 @@ void Capture()
     Point rr(r.x, r.y, r.z);
     Point ll(l.x, l.y, l.z);
     Point eye(pos.x, pos.y, pos.z);
-    Point temp(0.0, 0.0, 0.0);
-    // topleft = eye + l*planeDistance - r*windowWidth/2 + u*windowHeight / 2
 
-    temp = ll * plane_dist;
-    Point topleft = eye + temp;
-    temp = rr * 250.0;
-    topleft = topleft - temp;
-    temp = uu * 250.0;
-    topleft = topleft + temp;
+    // topleft = eye + l*planeDistance - r*windowWidth/2 + u*windowHeight / 2
+    Point topleft = eye + ll * plane_dist - rr * 250.0 + uu * 250.0;
 
     double du = (double)500 / pixels; // window_Width = 500
     double dv = (double)500 / pixels; // window_Height = 500
@@ -91,10 +85,7 @@ void Capture()
     {
         for (int j = 0; j < pixels; j++)
         {
-            temp = rr * (i * du);
-            curPixel = topleft + temp;
-            temp = uu * (j * dv);
-            curPixel = curPixel - temp;
+            curPixel = topleft + rr * (i * du) - uu * (j * dv);
 
             Ray cast_ray(eye, curPixel - eye);
 
