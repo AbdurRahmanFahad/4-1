@@ -19,23 +19,19 @@ public:
         x = a, y = b, z = c;
     }
 
-    Point operator+(Point &p)
+    Point operator+(Point p)
     {
-        Point res = Point(x + p.x, y + p.y, z + p.z);
-        return res;
+        return Point(x + p.x, y + p.y, z + p.z);
     }
 
-    Point operator-(Point &p)
+    Point operator-(Point p)
     {
-        Point res = Point(x - p.x, y - p.y, z - p.z);
-        return res;
+        return Point(x - p.x, y - p.y, z - p.z);
     }
 
     Point operator*(double d)
     {
-        Point res;
-        res.x = x * d, res.y = y * d, res.z = z * d;
-        return res;
+        return Point(x * d, y * d, z * d);
     }
 
     void Normalize()
@@ -108,8 +104,8 @@ Point get_intersection_point(Ray ray, double t)
 {
     // P(t) = R0 + t*Rd
     Point Rd = ray.dir, R0 = ray.start;
-    Point temp = Rd * t;
-    Point ans = R0 + temp;
+
+    Point ans = R0 + Rd * t;
 
     return ans;
 }
@@ -119,8 +115,7 @@ Point get_reflected_vector(Point incident_ray, Point normal)
     //r=d−2(d⋅n)n, d is incident ray, n is normal
 
     double k = 2 * Dot_product(incident_ray, normal);
-    Point temp = normal * k;
-    Point reflected = incident_ray - temp;
+    Point reflected = incident_ray - normal * k;
     reflected.Normalize();
 
     return reflected;
@@ -129,8 +124,7 @@ Point get_reflected_vector(Point incident_ray, Point normal)
 Point get_reverse_reflection(Point incident_ray, Point normal)
 {
     double k = 2 * Dot_product(incident_ray, normal);
-    Point temp = normal * k;
-    Point reflected = temp - incident_ray; // r = 2(d⋅n)n - d
+    Point reflected = normal * k - incident_ray; // r = 2(d⋅n)n - d
     reflected.Normalize();
 
     return reflected;
@@ -513,7 +507,6 @@ public:
 
     double get_t(Ray ray)
     {
-        //return -1;
         double Aq, Bq, Cq;
         Point R0 = ray.start, Rd = ray.dir;
         // - reference
@@ -619,10 +612,10 @@ public:
         length = tileWidth;
         no_tiles = floorWidth / tileWidth;
         floor_width = floorWidth;
-        coEfficients[0] = 0.2;
-        coEfficients[1] = 0.2;
-        coEfficients[2] = 0.2;
-        coEfficients[3] = 0.2;
+        coEfficients[0] = 0.4;
+        coEfficients[1] = 0.4;
+        coEfficients[2] = 0.4;
+        coEfficients[3] = 0.4;
         shine = 5;
     }
 
