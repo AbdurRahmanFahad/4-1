@@ -25,7 +25,11 @@ covers the following topics:
 ## Setting up Environment
 
 Login to Seed Ubuntu and start the apache server.
+
+
 `$sudo service apache2 start`
+
+
 Vulnerable website and its source code location.
 
 
