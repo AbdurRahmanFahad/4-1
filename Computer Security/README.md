@@ -7,4 +7,4 @@ algorithm for 128-bit key.
 
 ## OFFLINE 2
 
-NOT GIVEN YET
+Cross-Site Scripting (XSS) Attack
