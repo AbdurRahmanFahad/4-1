@@ -37,10 +37,12 @@ public:
     void Normalize()
     {
         double modulas = sqrt(x * x + y * y + z * z);
-        x = x / modulas, y = y / modulas, z = z / modulas;
+
+        if (modulas != 0)
+            x = x / modulas, y = y / modulas, z = z / modulas;
     }
 
-    friend ostream &operator<<(ostream &os, Point &p)
+    friend ostream &operator<<(ostream &os, Point p)
     {
         os << p.x << " " << p.y << " " << p.z << endl;
         return os;
@@ -112,7 +114,7 @@ Point get_intersection_point(Ray ray, double t)
 
 Point get_reflected_vector(Point incident_ray, Point normal)
 {
-    //r=d−2(d⋅n)n, d is incident ray, n is normal
+    // r = d − 2(d⋅n)n, d is incident ray, n is normal
 
     double k = 2 * Dot_product(incident_ray, normal);
     Point reflected = incident_ray - normal * k;
@@ -225,15 +227,14 @@ void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *c
                 clr[c] += (lambart + phong) * lights[i].color[c] * objects[id]->color[c];
         }
     }
-
-    // Illumination ***********************************
 }
 
 void reflectionati(Point intersection_point, Point reflected_vector, int level, int id, double *clr)
 {
     int nearest, t_min, t2;
 
-    //Reflection
+    // Adding Reflection lighting
+
     if (level < recursion_level)
     {
         Point start = intersection_point + reflected_vector;
@@ -279,6 +280,7 @@ public:
     Point getNormal(Point x, Point y)
     {
         Point temp = x - y;
+
         temp.Normalize();
 
         return temp;
@@ -377,6 +379,7 @@ public:
     {
         // (b - a) x (c - a);
         Point temp = Cross_product(p2 - p1, p3 - p1);
+
         temp.Normalize();
 
         return temp;
@@ -510,7 +513,7 @@ public:
     {
         double Aq, Bq, Cq;
         Point R0 = ray.start, Rd = ray.dir;
-        // - reference
+
         double xo = R0.x, yo = R0.y, zo = R0.z;
         double xd = Rd.x, yd = Rd.y, zd = Rd.z;
 
