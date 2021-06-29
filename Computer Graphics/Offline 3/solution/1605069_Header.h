@@ -205,6 +205,7 @@ void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *c
             }
         }
 
+        // if not obscured
         if (!flag)
         {
             // for diffuse
@@ -230,38 +231,37 @@ void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *c
 
 void reflectionati(Point intersection_point, Point reflected_vector, int level, int id, double *clr)
 {
-    int nearest, t_min, t2;
+    int nearest, tMin, t;
+
+    Ray reflected_ray(intersection_point + reflected_vector, reflected_vector);
 
     // Adding Reflection lighting
 
     if (level < recursion_level)
     {
-        Point start = intersection_point + reflected_vector;
-        Ray reflected_ray(start, reflected_vector);
 
         nearest = -1;
-        t_min = 10000;
+        tMin = 99999;
 
-        double *reflected_color = new double[3];
+        double reflected_color[3];
         reflected_color[0] = reflected_color[1] = reflected_color[2] = 0.0;
 
+        // level 0 to know nearest object
         for (int k = 0; k < objects.size(); k++)
         {
-            t2 = objects[k]->intersect(reflected_ray, reflected_color, 0);
+            t = objects[k]->intersect(reflected_ray, reflected_color, 0);
 
-            if (t2 > 0 && t2 < t_min)
-                t_min = t2, nearest = k;
+            if (t > 0 && t < tMin)
+                tMin = t, nearest = k;
         }
 
         if (nearest != -1)
         {
-            t2 = objects[nearest]->intersect(reflected_ray, reflected_color, level + 1);
-
+            objects[nearest]->intersect(reflected_ray, reflected_color, level + 1);
+            // Adding reflection light
             for (int c = 0; c < 3; c++)
                 clr[c] += (reflected_color[c] * objects[id]->coEfficients[3]);
         }
-
-        delete[] reflected_color;
     }
 }
 
@@ -603,6 +603,7 @@ class Floor : public Object
 public:
     int no_tiles;
     int floor_width;
+    bitmap_image testing;
 
     Floor() {}
 
@@ -617,6 +618,7 @@ public:
         coEfficients[2] = 0.4;
         coEfficients[3] = 0.4;
         shine = 5;
+        testing = bitmap_image("test.bmp");
     }
 
     void draw()
@@ -665,7 +667,28 @@ public:
         int tile_y = (dist.y / length);
 
         // Determining white or black (1 or 0)
-        color[0] = color[1] = color[2] = (tile_x + tile_y) % 2;
+        int cc = (tile_x + tile_y) % 2;
+        //color[0] = color[1] = color[2] = cc;
+
+        // *************************
+
+        double ii = dist.x - tile_x * length;
+        double jj = dist.y - tile_y * length;
+
+        int i, j;
+        unsigned char r, g, b;
+        i = (testing.width() - 1) * (double)ii / length;
+        j = (testing.height() - 1) * (double)jj / length;
+        testing.get_pixel(i, testing.height() - j - 1, r, g, b); // r,g,b are from 0 to 255
+
+        if (cc == 0)
+        {
+            color[0] = r / 255.0, color[1] = g / 255.0, color[2] = b / 255.0;
+        }
+        else
+            color[0] = color[1] = color[2] = 1.0; // make it 0.0 to paste on brighter tiles
+
+        // ***************************
     }
 
     double get_t(Ray ray)
