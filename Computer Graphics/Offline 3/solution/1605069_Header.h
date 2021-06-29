@@ -37,10 +37,12 @@ public:
     void Normalize()
     {
         double modulas = sqrt(x * x + y * y + z * z);
-        x = x / modulas, y = y / modulas, z = z / modulas;
+
+        if (modulas != 0)
+            x = x / modulas, y = y / modulas, z = z / modulas;
     }
 
-    friend ostream &operator<<(ostream &os, Point &p)
+    friend ostream &operator<<(ostream &os, Point p)
     {
         os << p.x << " " << p.y << " " << p.z << endl;
         return os;
@@ -112,19 +114,10 @@ Point get_intersection_point(Ray ray, double t)
 
 Point get_reflected_vector(Point incident_ray, Point normal)
 {
-    //r=d−2(d⋅n)n, d is incident ray, n is normal
+    // r = d − 2(d⋅n)n, d is incident ray, n is normal
 
     double k = 2 * Dot_product(incident_ray, normal);
     Point reflected = incident_ray - normal * k;
-    reflected.Normalize();
-
-    return reflected;
-}
-
-Point get_reverse_reflection(Point incident_ray, Point normal)
-{
-    double k = 2 * Dot_product(incident_ray, normal);
-    Point reflected = normal * k - incident_ray; // r = 2(d⋅n)n - d
     reflected.Normalize();
 
     return reflected;
@@ -188,52 +181,59 @@ void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *c
         Point L = lights[i].light_pos - intersection_point;
         L.Normalize();
 
-        Point start = intersection_point + L;
-        Ray sunLight(start, L);
+        Ray light_ray(intersection_point + L, L);
 
-        Point N = normal;
-        Point R = get_reverse_reflection(L, N);
+        double k = 2 * Dot_product(L, normal);
+        Point R = normal * k - L; // r = 2(d⋅n)n - d
+        R.Normalize();
 
+        // viewer's ray direction
         Point V = r.start - intersection_point;
         V.Normalize();
 
         //check if obscured
-        bool obscured = false;
+        bool flag = false;
+
         for (int j = 0; j < objects.size(); j++)
         {
-            double temp = objects[j]->get_t(sunLight);
+            double chech = objects[j]->get_t(light_ray);
 
-            if (temp > 0)
+            if (chech > 0) // blocking the light ray
             {
-                obscured = true;
+                flag = true;
                 break;
             }
         }
 
-        if (!obscured)
+        if (!flag)
         {
-            double cosTheta = max(0.0, Dot_product(L, N));
-            double cosPhi = max(0.0, Dot_product(R, V));
+            // for diffuse
+            // Id = Ip * kd * (L.N)
+            double kd = objects[id]->coEfficients[1];
+            double diffuse = kd * max(Dot_product(L, normal), 0.0);
 
-            double lambart = objects[id]->coEfficients[1] * cosTheta;
-            double phong = pow(cosPhi, objects[id]->shine);
+            // for specular
+            // Is = Ip * ks * (R.V)^k
+            // k = shine
+            double ks = objects[id]->coEfficients[2];
+            double cos_phi = max(Dot_product(R, V), 0.0);
+            double specular = ks * pow(cos_phi, objects[id]->shine);
 
             // calculate phongValue using r, rayr
             // color += l.color * coEfficient[DIFF] *lambertValue *intersectionPointColor
             // color += l.color * coEfficient[SPEC] * phongValue^shine * intersectionPointColor
             for (int c = 0; c < 3; c++)
-                clr[c] += (lambart + phong) * lights[i].color[c] * objects[id]->color[c];
+                clr[c] += (diffuse + specular) * lights[i].color[c] * objects[id]->color[c];
         }
     }
-
-    // Illumination ***********************************
 }
 
 void reflectionati(Point intersection_point, Point reflected_vector, int level, int id, double *clr)
 {
     int nearest, t_min, t2;
 
-    //Reflection
+    // Adding Reflection lighting
+
     if (level < recursion_level)
     {
         Point start = intersection_point + reflected_vector;
@@ -279,6 +279,7 @@ public:
     Point getNormal(Point x, Point y)
     {
         Point temp = x - y;
+
         temp.Normalize();
 
         return temp;
@@ -377,6 +378,7 @@ public:
     {
         // (b - a) x (c - a);
         Point temp = Cross_product(p2 - p1, p3 - p1);
+
         temp.Normalize();
 
         return temp;
@@ -510,7 +512,7 @@ public:
     {
         double Aq, Bq, Cq;
         Point R0 = ray.start, Rd = ray.dir;
-        // - reference
+
         double xo = R0.x, yo = R0.y, zo = R0.z;
         double xd = Rd.x, yd = Rd.y, zd = Rd.z;
 
@@ -623,22 +625,28 @@ public:
         double p = reference_point.x;
         double q = reference_point.y;
         double r = reference_point.z;
-        glBegin(GL_QUADS);
-        {
-            for (int i = 0; i < no_tiles; i++)
-            {
-                for (int j = 0; j < no_tiles; j++)
-                {
-                    int c = (i + j) % 2;
-                    glColor3f(c, c, c);
 
-                    glVertex3f(p + i * length, q + j * length, r);
-                    glVertex3f(p + i * length, q + (j + 1) * length, r);
-                    glVertex3f(p + (i + 1) * length, q + (j + 1) * length, r);
-                    glVertex3f(p + (i + 1) * length, q + j * length, r);
-                }
+        glBegin(GL_QUADS);
+
+        for (int i = 0; i < no_tiles; i++)
+        {
+            for (int j = 0; j < no_tiles; j++)
+            {
+                int c = (i + j) % 2;
+
+                // if (c == 0)
+                //     glColor3f(1, 0, 0);
+                // else
+                //     glColor3f(c, c, c);
+                glColor3f(c, c, c);
+
+                glVertex3f(p + i * length, q + j * length, r);
+                glVertex3f(p + i * length, q + (j + 1) * length, r);
+                glVertex3f(p + (i + 1) * length, q + (j + 1) * length, r);
+                glVertex3f(p + (i + 1) * length, q + j * length, r);
             }
         }
+
         glEnd();
     }
 
@@ -665,13 +673,10 @@ public:
         // checking if ray is parallel to floor (xy plane)
         if (ray.dir.z == 0)
             return -1;
-
-        double t = (-ray.start.z / ray.dir.z);
-
-        Point temp = ray.dir * t;
-        Point intersection_point = ray.start + temp;
-
-        set_floor_color(intersection_point);
+        // n·(Ro + t * Rd) + D = 0
+        // t = -(D + n·Ro) / n·Rd , // Plane eqn, z = D, D = 0
+        // n = (0,0,1)
+        double t = -ray.start.z / ray.dir.z;
 
         return t;
     }
@@ -687,6 +692,7 @@ public:
             return t;
 
         Point intersection_point = get_intersection_point(r, t);
+        set_floor_color(intersection_point);
         Point normal(0, 0, 1);
         Point reflected_vector = get_reflected_vector(r.dir, normal);
 
