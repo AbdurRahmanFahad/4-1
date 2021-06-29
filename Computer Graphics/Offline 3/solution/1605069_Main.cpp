@@ -74,13 +74,14 @@ void Capture()
 
     //// Choose middle of the grid cell
     //topleft = topleft + r * (0.5 * du) - u * (0.5 * dv)
+    topleft = topleft + rr * 0.5 * du - uu * 0.5 * dv;
 
     int nearest;
     double t, tMin;
     Point curPixel;
     double dummyColor[3];
 
-    bitmap_image image(pixels, pixels);
+    bitmap_image b_image(pixels, pixels);
 
     for (int i = 0; i < pixels; i++)
     {
@@ -91,7 +92,7 @@ void Capture()
             Ray cast_ray(eye, curPixel - eye);
 
             nearest = -1;
-            tMin = 10000;
+            tMin = 99999;
 
             // Knowing which is the nearest object
             for (int k = 0; k < objects.size(); k++)
@@ -105,7 +106,7 @@ void Capture()
 
             if (nearest != -1)
             {
-                t = objects[nearest]->intersect(cast_ray, dummyColor, 1);
+                objects[nearest]->intersect(cast_ray, dummyColor, 1);
 
                 for (int pp = 0; pp < 3; pp++)
                 {
@@ -124,14 +125,14 @@ void Capture()
                 dummyColor[2] = 0.0;
             }
 
-            image.set_pixel(i, j, 255 * dummyColor[0], 255 * dummyColor[1], 255 * dummyColor[2]);
+            b_image.set_pixel(i, j, 255.0 * dummyColor[0], 255.0 * dummyColor[1], 255.0 * dummyColor[2]);
         }
     }
 
-    image.save_image("image.bmp");
-    image.clear();
+    b_image.save_image("1605069_image.bmp");
+    b_image.clear();
 
-    cout << "Capture()" << endl;
+    cout << "Image Capture()'d" << endl;
 }
 
 // Capture Function ***********************************
@@ -253,13 +254,11 @@ void specialKeyListener(int key, int x, int y)
 
 void draw_all()
 {
-    // Drawing Objects
     for (int i = 0; i < total_objects; i++)
     {
         objects[i]->draw();
     }
 
-    // Drawing Light Sources
     for (int i = 0; i < total_light_sources; i++)
     {
         lights[i].draw();

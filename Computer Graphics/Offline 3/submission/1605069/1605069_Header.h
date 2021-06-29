@@ -123,15 +123,6 @@ Point get_reflected_vector(Point incident_ray, Point normal)
     return reflected;
 }
 
-Point get_reverse_reflection(Point incident_ray, Point normal)
-{
-    double k = 2 * Dot_product(incident_ray, normal);
-    Point reflected = normal * k - incident_ray; // r = 2(d⋅n)n - d
-    reflected.Normalize();
-
-    return reflected;
-}
-
 class Object
 {
 public:
@@ -190,79 +181,87 @@ void Illuminati(Point intersection_point, Point normal, Ray r, int id, double *c
         Point L = lights[i].light_pos - intersection_point;
         L.Normalize();
 
-        Point start = intersection_point + L;
-        Ray sunLight(start, L);
+        Ray light_ray(intersection_point + L, L);
 
-        Point N = normal;
-        Point R = get_reverse_reflection(L, N);
+        double k = 2 * Dot_product(L, normal);
+        Point R = normal * k - L; // r = 2(d⋅n)n - d
+        R.Normalize();
 
+        // viewer's ray direction
         Point V = r.start - intersection_point;
         V.Normalize();
 
         //check if obscured
-        bool obscured = false;
+        bool flag = false;
+
         for (int j = 0; j < objects.size(); j++)
         {
-            double temp = objects[j]->get_t(sunLight);
+            double chech = objects[j]->get_t(light_ray);
 
-            if (temp > 0)
+            if (chech > 0) // blocking the light ray
             {
-                obscured = true;
+                flag = true;
                 break;
             }
         }
 
-        if (!obscured)
+        // if not obscured
+        if (!flag)
         {
-            double cosTheta = max(0.0, Dot_product(L, N));
-            double cosPhi = max(0.0, Dot_product(R, V));
+            // for diffuse
+            // Id = Ip * kd * (L.N)
+            double kd = objects[id]->coEfficients[1];
+            double diffuse = kd * max(Dot_product(L, normal), 0.0);
 
-            double lambart = objects[id]->coEfficients[1] * cosTheta;
-            double phong = pow(cosPhi, objects[id]->shine);
+            // for specular
+            // Is = Ip * ks * (R.V)^k
+            // k = shine
+            double ks = objects[id]->coEfficients[2];
+            double cos_phi = max(Dot_product(R, V), 0.0);
+            double specular = ks * pow(cos_phi, objects[id]->shine);
 
             // calculate phongValue using r, rayr
             // color += l.color * coEfficient[DIFF] *lambertValue *intersectionPointColor
             // color += l.color * coEfficient[SPEC] * phongValue^shine * intersectionPointColor
             for (int c = 0; c < 3; c++)
-                clr[c] += (lambart + phong) * lights[i].color[c] * objects[id]->color[c];
+                clr[c] += (diffuse + specular) * lights[i].color[c] * objects[id]->color[c];
         }
     }
 }
 
 void reflectionati(Point intersection_point, Point reflected_vector, int level, int id, double *clr)
 {
-    int nearest, t_min, t2;
+    int nearest, tMin, t;
+
+    Ray reflected_ray(intersection_point + reflected_vector, reflected_vector);
 
     // Adding Reflection lighting
 
     if (level < recursion_level)
     {
-        Point start = intersection_point + reflected_vector;
-        Ray reflected_ray(start, reflected_vector);
 
         nearest = -1;
-        t_min = 10000;
+        tMin = 99999;
 
-        double *reflected_color = new double[3];
+        double reflected_color[3];
         reflected_color[0] = reflected_color[1] = reflected_color[2] = 0.0;
 
+        // level 0 to know nearest object
         for (int k = 0; k < objects.size(); k++)
         {
-            t2 = objects[k]->intersect(reflected_ray, reflected_color, 0);
+            t = objects[k]->intersect(reflected_ray, reflected_color, 0);
 
-            if (t2 > 0 && t2 < t_min)
-                t_min = t2, nearest = k;
+            if (t > 0 && t < tMin)
+                tMin = t, nearest = k;
         }
 
         if (nearest != -1)
         {
-            t2 = objects[nearest]->intersect(reflected_ray, reflected_color, level + 1);
-
+            objects[nearest]->intersect(reflected_ray, reflected_color, level + 1);
+            // Adding reflection light
             for (int c = 0; c < 3; c++)
                 clr[c] += (reflected_color[c] * objects[id]->coEfficients[3]);
         }
-
-        delete[] reflected_color;
     }
 }
 
@@ -604,6 +603,7 @@ class Floor : public Object
 public:
     int no_tiles;
     int floor_width;
+    bitmap_image testing;
 
     Floor() {}
 
@@ -618,6 +618,7 @@ public:
         coEfficients[2] = 0.4;
         coEfficients[3] = 0.4;
         shine = 5;
+        testing = bitmap_image("test.bmp");
     }
 
     void draw()
@@ -626,22 +627,28 @@ public:
         double p = reference_point.x;
         double q = reference_point.y;
         double r = reference_point.z;
-        glBegin(GL_QUADS);
-        {
-            for (int i = 0; i < no_tiles; i++)
-            {
-                for (int j = 0; j < no_tiles; j++)
-                {
-                    int c = (i + j) % 2;
-                    glColor3f(c, c, c);
 
-                    glVertex3f(p + i * length, q + j * length, r);
-                    glVertex3f(p + i * length, q + (j + 1) * length, r);
-                    glVertex3f(p + (i + 1) * length, q + (j + 1) * length, r);
-                    glVertex3f(p + (i + 1) * length, q + j * length, r);
-                }
+        glBegin(GL_QUADS);
+
+        for (int i = 0; i < no_tiles; i++)
+        {
+            for (int j = 0; j < no_tiles; j++)
+            {
+                int c = (i + j) % 2;
+
+                // if (c == 0)
+                //     glColor3f(1, 0, 0);
+                // else
+                //     glColor3f(c, c, c);
+                glColor3f(c, c, c);
+
+                glVertex3f(p + i * length, q + j * length, r);
+                glVertex3f(p + i * length, q + (j + 1) * length, r);
+                glVertex3f(p + (i + 1) * length, q + (j + 1) * length, r);
+                glVertex3f(p + (i + 1) * length, q + j * length, r);
             }
         }
+
         glEnd();
     }
 
@@ -660,7 +667,28 @@ public:
         int tile_y = (dist.y / length);
 
         // Determining white or black (1 or 0)
-        color[0] = color[1] = color[2] = (tile_x + tile_y) % 2;
+        int cc = (tile_x + tile_y) % 2;
+        //color[0] = color[1] = color[2] = cc;
+
+        // *************************
+
+        double ii = dist.x - tile_x * length;
+        double jj = dist.y - tile_y * length;
+
+        int i, j;
+        unsigned char r, g, b;
+        i = (testing.width() - 1) * (double)ii / length;
+        j = (testing.height() - 1) * (double)jj / length;
+        testing.get_pixel(i, testing.height() - j - 1, r, g, b); // r,g,b values are from 0 to 255
+
+        if (cc == 0)
+        {
+            color[0] = r / 255.0, color[1] = g / 255.0, color[2] = b / 255.0;
+        }
+        else
+            color[0] = color[1] = color[2] = 1.0; // make it 0.0 to paste on brighter tiles
+
+        // ***************************
     }
 
     double get_t(Ray ray)
@@ -668,13 +696,10 @@ public:
         // checking if ray is parallel to floor (xy plane)
         if (ray.dir.z == 0)
             return -1;
-
-        double t = (-ray.start.z / ray.dir.z);
-
-        Point temp = ray.dir * t;
-        Point intersection_point = ray.start + temp;
-
-        set_floor_color(intersection_point);
+        // n·(Ro + t * Rd) + D = 0
+        // t = -(D + n·Ro) / n·Rd , // Plane eqn, z = D, D = 0
+        // n = (0,0,1)
+        double t = -ray.start.z / ray.dir.z;
 
         return t;
     }
@@ -690,6 +715,7 @@ public:
             return t;
 
         Point intersection_point = get_intersection_point(r, t);
+        set_floor_color(intersection_point);
         Point normal(0, 0, 1);
         Point reflected_vector = get_reflected_vector(r.dir, normal);
 

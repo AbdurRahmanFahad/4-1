@@ -56,11 +56,10 @@ struct point normalize(struct point v)
 
 void Capture()
 {
-    bitmap_image image(pixels, pixels);
-    // View angle is 80
+    // View angle is 80, windowHeight is 500
     double theta = (80.0 / 2.0);
     theta = (pi * theta) / 180.0;
-    double plane_dist = (500 / 2) / tan(theta);
+    double planeDistance = (500 / 2) / tan(theta);
 
     Point uu(u.x, u.y, u.z);
     Point rr(r.x, r.y, r.z);
@@ -68,18 +67,21 @@ void Capture()
     Point eye(pos.x, pos.y, pos.z);
 
     // topleft = eye + l*planeDistance - r*windowWidth/2 + u*windowHeight / 2
-    Point topleft = eye + ll * plane_dist - rr * 250.0 + uu * 250.0;
+    Point topleft = eye + ll * planeDistance - rr * 250.0 + uu * 250.0;
 
     double du = (double)500 / pixels; // window_Width = 500
     double dv = (double)500 / pixels; // window_Height = 500
 
     //// Choose middle of the grid cell
     //topleft = topleft + r * (0.5 * du) - u * (0.5 * dv)
+    topleft = topleft + rr * 0.5 * du - uu * 0.5 * dv;
 
     int nearest;
     double t, tMin;
     Point curPixel;
-    double dummy_color[3]; //= new double[3];
+    double dummyColor[3];
+
+    bitmap_image b_image(pixels, pixels);
 
     for (int i = 0; i < pixels; i++)
     {
@@ -90,12 +92,13 @@ void Capture()
             Ray cast_ray(eye, curPixel - eye);
 
             nearest = -1;
-            tMin = 10000;
+            tMin = 99999;
 
+            // Knowing which is the nearest object
             for (int k = 0; k < objects.size(); k++)
             {
                 //level 0  to know the nearest object
-                t = objects[k]->intersect(cast_ray, dummy_color, 0);
+                t = objects[k]->intersect(cast_ray, dummyColor, 0);
 
                 if (t > 0 && t < tMin)
                     tMin = t, nearest = k;
@@ -103,30 +106,33 @@ void Capture()
 
             if (nearest != -1)
             {
-                t = objects[nearest]->intersect(cast_ray, dummy_color, 1);
+                objects[nearest]->intersect(cast_ray, dummyColor, 1);
 
-                for (int c = 0; c < 3; c++)
+                for (int pp = 0; pp < 3; pp++)
                 {
-                    // dummy_color[c] = objects[nearest]->color[c];
                     // keeping values between 0 and 1
-                    if (dummy_color[c] < 0.0)
-                        dummy_color[c] = 0.0;
+                    if (dummyColor[pp] < 0.0)
+                        dummyColor[pp] = 0.0;
 
-                    else if (dummy_color[c] > 1.0)
-                        dummy_color[c] = 1.0;
+                    else if (dummyColor[pp] > 1.0)
+                        dummyColor[pp] = 1.0;
                 }
             }
-            else
-                dummy_color[0] = dummy_color[1] = dummy_color[2] = 0.0;
+            else // black screen, no object, no floor
+            {
+                dummyColor[0] = 0.0;
+                dummyColor[1] = 0.0;
+                dummyColor[2] = 0.0;
+            }
 
-            image.set_pixel(i, j, 255 * dummy_color[0], 255 * dummy_color[1], 255 * dummy_color[2]);
+            b_image.set_pixel(i, j, 255.0 * dummyColor[0], 255.0 * dummyColor[1], 255.0 * dummyColor[2]);
         }
     }
 
-    image.save_image("image.bmp");
-    image.clear();
+    b_image.save_image("1605069_image.bmp");
+    b_image.clear();
 
-    cout << "Capture()" << endl;
+    cout << "Image Capture()'d" << endl;
 }
 
 // Capture Function ***********************************

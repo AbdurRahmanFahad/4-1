@@ -679,7 +679,7 @@ public:
         unsigned char r, g, b;
         i = (testing.width() - 1) * (double)ii / length;
         j = (testing.height() - 1) * (double)jj / length;
-        testing.get_pixel(i, testing.height() - j - 1, r, g, b); // r,g,b are from 0 to 255
+        testing.get_pixel(i, testing.height() - j - 1, r, g, b); // r,g,b values are from 0 to 255
 
         if (cc == 0)
         {
