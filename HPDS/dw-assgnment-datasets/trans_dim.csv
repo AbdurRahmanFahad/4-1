@@ -1,0 +1,37 @@
+payment_key,trans_type,bank_name
+P001,cash,None
+P002,online,AB Bank Limited
+P003,online,Bangladesh Commerce Bank Limited
+P004,online,Bank Asia Limited
+P005,online,BRAC Bank Limited
+P006,online,Citizens Bank Limited
+P007,online,City Bank Limited
+P008,online,Community Bank Bangladesh Limited
+P009,online,Dhaka Bank Limited
+P010,online,Dutch-Bangla Bank Limited
+P011,online,Eastern Bank Limited
+P012,online,IFIC Bank Limited
+P013,online,Jamuna Bank Limited
+P014,online,Meghna Bank Limited
+P015,online,Mercantile Bank Limited
+P016,online,Midland Bank Limited
+P017,online,Modhumoti Bank Limited
+P018,online,Mutual Trust Bank Limited
+P019,online,National Bank Limited
+P020,online,National Credit & Commerce Bank Limited
+P021,online,NRB Bank Limited
+P022,online,NRB Commercial Bank Ltd
+P023,online,NRB Global Bank Ltd
+P024,online,One Bank Limited
+P025,online,Padma Bank Limited
+P026,online,Premier Bank Limited
+P027,online,Prime Bank Limited
+P028,online,Pubali Bank Limited
+P029,online,Standard Bank Limited
+P030,online,Shimanto Bank Ltd
+P031,online,Southeast Bank Limited
+P032,online,South Bangla Agriculture and Commerce Bank Limited
+P033,online,Trust Bank Limited
+P034,online,United Commercial Bank Ltd
+P035,online,Uttara Bank Limited
+P036,online,Bengal Commercial Bank Ltd
